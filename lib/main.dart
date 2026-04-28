@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:finalexam_salaries/view/homepage.dart';
+import 'package:finalexam_salaries/view/searchpage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/home',
           routes: {
             '/home': (context) => MyHomePage(title: 'FinalExamSalaries'),
+            '/search': (context) => const SearchPage(),
           }
     );
     
