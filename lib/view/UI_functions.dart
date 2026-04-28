@@ -59,7 +59,7 @@ class _CustomButtonState extends State<CustomButton>
 
   @override
   Widget build(BuildContext context) {
-    final scheme = themePresenter.getColorScheme();
+    final scheme = Theme.of(context).colorScheme;
     Color bgColor;
     Color fgColor;
 
@@ -110,6 +110,106 @@ class _CustomButtonState extends State<CustomButton>
               child: Text(widget.text),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomCard extends StatefulWidget {
+  final String title;
+  final String description;
+  final VoidCallback? onPressed;
+
+  const CustomCard({
+    super.key,
+    required this.title,
+    required this.description,
+    this.onPressed,
+  });
+
+  @override
+  State<CustomCard> createState() => _CustomCardState();
+}
+
+class _CustomCardState extends State<CustomCard> {
+  @override
+  void initState() {
+    super.initState();
+    themePresenter.addListener(_onThemeChanged);
+  }
+
+  @override
+  void dispose() {
+    themePresenter.removeListener(_onThemeChanged);
+    super.dispose();
+  }
+
+  void _onThemeChanged() => setState(() {});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final radius = BorderRadius.circular(
+      themePresenter.BORDER_RADIUS.toDouble(),
+    );
+
+    return Center(
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.95,
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: radius,
+          boxShadow: [
+            BoxShadow(
+              color: scheme.onSurface.withAlpha(125),
+              blurRadius: 4,
+              offset: const Offset(2, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    widget.title,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: scheme.onSurface,
+                    ),
+                  ),
+                ),
+                if (widget.onPressed != null) ...[
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: widget.onPressed,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: scheme.primary,
+                      foregroundColor: scheme.onPrimary,
+                      shape: RoundedRectangleBorder(borderRadius: radius),
+                      minimumSize: const Size(40, 40),
+                      padding: EdgeInsets.zero,
+                    ),
+                    child: const Icon(Icons.play_arrow),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              widget.description,
+              style: TextStyle(fontSize: 14, color: scheme.onSurface),
+            ),
+          ],
         ),
       ),
     );

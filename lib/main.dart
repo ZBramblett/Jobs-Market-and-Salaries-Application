@@ -89,6 +89,11 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: .center,
           children: [
             CustomButton(text: 'test', onPressed: _incrementCounter),
+            CustomCard(
+              title: 'Text card',
+              description: 'Description for the text card',
+              onPressed: _incrementCounter,
+            ),
             const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',
