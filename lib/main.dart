@@ -95,6 +95,19 @@ class _MyHomePageState extends State<MyHomePage> {
                   'Description for the example card\nUse this for search results and whatnot\nOr other listed items',
               onPressed: _incrementCounter,
             ),
+            CustomSettingsItem(
+              text: 'Toggle Example',
+              style: 'toggle',
+              onToggle: (val) {
+                print("Toggled: $val");
+              },
+            ),
+            CustomSettingsItem(
+              text: 'Button Example',
+              style: 'button',
+              buttonText: 'Execute',
+              onPressed: _incrementCounter,
+            ),
             const Text('You have pushed the button this many times:'),
             Text(
               '$_counter',

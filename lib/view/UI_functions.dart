@@ -215,3 +215,108 @@ class _CustomCardState extends State<CustomCard> {
     );
   }
 }
+
+class CustomSettingsItem extends StatefulWidget {
+  final String text;
+  final String style; // 'toggle' or 'button'
+
+  // For 'toggle' style
+  final bool initialValue;
+  final ValueChanged<bool>? onToggle;
+
+  // For 'button' style
+  final VoidCallback? onPressed;
+  final String buttonText;
+
+  const CustomSettingsItem({
+    super.key,
+    required this.text,
+    this.style = 'toggle',
+    this.initialValue = false,
+    this.onToggle,
+    this.onPressed,
+    this.buttonText = 'Action',
+  });
+
+  @override
+  State<CustomSettingsItem> createState() => _CustomSettingsItemState();
+}
+
+class _CustomSettingsItemState extends State<CustomSettingsItem> {
+  late bool _currentValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentValue = widget.initialValue;
+    themePresenter.addListener(_onThemeChanged);
+  }
+
+  @override
+  void dispose() {
+    themePresenter.removeListener(_onThemeChanged);
+    super.dispose();
+  }
+
+  void _onThemeChanged() => setState(() {});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final radius = BorderRadius.circular(
+      themePresenter.BORDER_RADIUS.toDouble(),
+    );
+
+    return Center(
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.95,
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: radius,
+          boxShadow: [
+            BoxShadow(
+              color: scheme.onSurface.withAlpha(125),
+              blurRadius: 4,
+              offset: const Offset(2, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                widget.text,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: scheme.onSurface,
+                ),
+              ),
+            ),
+            if (widget.style == 'toggle')
+              Switch(
+                value: _currentValue,
+                onChanged: (val) {
+                  setState(() {
+                    _currentValue = val;
+                  });
+                  if (widget.onToggle != null) {
+                    widget.onToggle!(val);
+                  }
+                },
+                activeColor: scheme.primary,
+              )
+            else if (widget.style == 'button')
+              CustomButton(
+                text: widget.buttonText,
+                onPressed: widget.onPressed,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
