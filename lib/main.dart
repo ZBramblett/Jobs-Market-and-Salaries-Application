@@ -88,10 +88,11 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: .center,
           children: [
-            CustomButton(text: 'test', onPressed: _incrementCounter),
+            CustomButton(text: 'Example button', onPressed: _incrementCounter),
             CustomCard(
-              title: 'Text card',
-              description: 'Description for the text card',
+              title: 'Example card',
+              description:
+                  'Description for the example card\nUse this for search results and whatnot\nOr other listed items',
               onPressed: _incrementCounter,
             ),
             const Text('You have pushed the button this many times:'),
