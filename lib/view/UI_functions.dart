@@ -164,7 +164,7 @@ class _CustomCardState extends State<CustomCard> {
           borderRadius: radius,
           boxShadow: [
             BoxShadow(
-              color: scheme.onSurface.withAlpha(125),
+              color: Color.fromARGB(255, 0, 0, 0).withAlpha(125),
               blurRadius: 4,
               offset: const Offset(2, 2),
             ),
@@ -277,7 +277,7 @@ class _CustomSettingsItemState extends State<CustomSettingsItem> {
           borderRadius: radius,
           boxShadow: [
             BoxShadow(
-              color: scheme.onSurface.withAlpha(125),
+              color: Color.fromARGB(255, 0, 0, 0).withAlpha(125),
               blurRadius: 4,
               offset: const Offset(2, 2),
             ),
