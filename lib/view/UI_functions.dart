@@ -169,6 +169,9 @@ class _CustomCardState extends State<CustomCard> {
               offset: const Offset(2, 2),
             ),
           ],
+          border: Theme.of(context).brightness == Brightness.dark
+              ? Border.all(color: scheme.primary.withAlpha(75), width: 0.75)
+              : null,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -282,6 +285,9 @@ class _CustomSettingsItemState extends State<CustomSettingsItem> {
               offset: const Offset(2, 2),
             ),
           ],
+          border: Theme.of(context).brightness == Brightness.dark
+              ? Border.all(color: scheme.primary.withAlpha(75), width: 0.75)
+              : null,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

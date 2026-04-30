@@ -21,6 +21,11 @@ class SettingsPage extends StatelessWidget {
                 themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
               },
             ),
+            CustomSettingsItem(
+              text: 'Log Out',
+              style: 'button',
+              onPressed: () {},
+            ),
           ],
         ),
       ),

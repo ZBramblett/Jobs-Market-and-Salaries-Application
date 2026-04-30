@@ -26,8 +26,15 @@ class MyApp extends StatelessWidget {
             ),
           ),
           darkTheme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 35, 82, 45),
+            colorScheme: ColorScheme(
+              primary: Color.fromARGB(255, 175, 255, 175),
+              secondary: Color.fromARGB(255, 100, 255, 100),
+              surface: Color.fromARGB(255, 20, 22, 20),
+              error: Color.fromARGB(255, 255, 0, 0),
+              onPrimary: Color.fromARGB(255, 35, 40, 35),
+              onSecondary: Color.fromARGB(255, 35, 40, 35),
+              onSurface: Color.fromARGB(255, 255, 255, 255),
+              onError: Color.fromARGB(255, 10, 20, 10),
               brightness: Brightness.dark,
             ),
           ),
