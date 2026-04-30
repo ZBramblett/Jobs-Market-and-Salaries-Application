@@ -307,7 +307,7 @@ class _CustomSettingsItemState extends State<CustomSettingsItem> {
                     widget.onToggle!(val);
                   }
                 },
-                activeColor: scheme.primary,
+                activeThumbColor: scheme.primary,
               )
             else if (widget.style == 'button')
               CustomButton(
