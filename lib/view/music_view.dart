@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:http/http.dart' as http;
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MusicView extends StatefulWidget {
   const MusicView({super.key});
@@ -10,238 +12,272 @@ class MusicView extends StatefulWidget {
 }
 
 class _MusicViewState extends State<MusicView> {
-  final AudioPlayer player = AudioPlayer();
+  static const String apiKey = String.fromEnvironment('YOUTUBE_API_KEY');
 
-  double volume = 1.0;
+  final TextEditingController searchController = TextEditingController();
+  final TextEditingController timerController = TextEditingController();
 
-  final TextEditingController timerController =
-      TextEditingController();
+  List<Map<String, String>> sounds = [];
+  bool isLoading = false;
 
   Timer? countdownTimer;
-  int secondsLeft = 0;
-  String status = "";
+  int remainingSeconds = 0;
+  String timerStatus = "";
 
-  final List<Map<String, String>> tracks = [
-    {
-      "title": "Interview Calm",
-      "url":
-          "https://raw.githubusercontent.com/M-dot21/MP3_audio/main/themediaguy-soft-soothing-deep-white-noise-378857.mp3",
-    },
-    {
-      "title": "Ocean Focus",
-      "url":
-          "https://raw.githubusercontent.com/M-dot21/MP3_audio/main/rmultimediaeu-ocean-waves-sound-01-321570.mp3",
-    },
-    {
-      "title": "Rain Reset",
-      "url":
-          "https://raw.githubusercontent.com/M-dot21/MP3_audio/main/dragon-studio-copyright-free-rain-sounds-331497.mp3",
-    },
-    {
-      "title": "Deep Work",
-      "url":
-          "https://raw.githubusercontent.com/M-dot21/MP3_audio/main/themediaguy-soft-soothing-deep-white-noise-378857.mp3",
-    },
-  ];
+  double volume = 100;
 
-  Future<void> playSong(String url) async {
-    await player.stop();
-    await player.setReleaseMode(
-      ReleaseMode.loop,
+  late YoutubePlayerController controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = YoutubePlayerController(
+      initialVideoId: 'jfKfPfyJRdk',
+      flags: const YoutubePlayerFlags(
+        autoPlay: true,
+        mute: false,
+        hideControls: true,
+        hideThumbnail: true,
+        controlsVisibleAtStart: false,
+      ),
     );
-    await player.play(
-      UrlSource(url),
-    );
+
+    controller.setVolume(volume.toInt());
   }
 
-  Future<void> stopSong() async {
-    await player.stop();
+  Future<void> searchYouTube(String query) async {
+    FocusScope.of(context).unfocus();
+
+    query = query.trim();
+
+    if (query.isEmpty) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final url = Uri.parse(
+      "https://www.googleapis.com/youtube/v3/search"
+      "?part=snippet&type=video&maxResults=10&q=$query audio&key=$apiKey",
+    );
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final items = data['items'] as List;
+
+      setState(() {
+        sounds = items
+            .where((item) => item['id']?['videoId'] != null)
+            .map<Map<String, String>>((item) {
+          final snippet = item['snippet'];
+          final idMap = item['id'];
+
+          return {
+            "title": snippet['title'].toString(),
+            "id": idMap['videoId'].toString(),
+          };
+        }).toList();
+      });
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
-  Future<void> setSound(double v) async {
-    volume = v;
-    await player.setVolume(v);
+  void playAudio(String id) {
+    controller.load(id);
+    controller.unMute();
+    controller.setVolume(volume.toInt());
   }
 
   void startTimer() {
-    final minutes =
-        int.tryParse(timerController.text);
+    final minutes = int.tryParse(timerController.text);
 
     if (minutes == null || minutes <= 0) {
       setState(() {
-        status = "Enter valid minutes";
+        timerStatus = "Enter valid minutes";
       });
       return;
     }
 
     countdownTimer?.cancel();
 
-    secondsLeft = minutes * 60;
+    remainingSeconds = minutes * 60;
 
-    countdownTimer = Timer.periodic(
-      const Duration(seconds: 1),
-      (timer) async {
-        if (secondsLeft <= 0) {
-          timer.cancel();
-          await stopSong();
+    setState(() {
+      timerStatus = formatTime(remainingSeconds);
+    });
 
-          setState(() {
-            status = "Stopped";
-          });
-        } else {
-          setState(() {
-            secondsLeft--;
-            status =
-                formatTime(secondsLeft);
-          });
-        }
-      },
-    );
+    countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingSeconds <= 1) {
+        timer.cancel();
+        controller.pause();
+
+        setState(() {
+          remainingSeconds = 0;
+          timerStatus = "Stopped";
+        });
+      } else {
+        setState(() {
+          remainingSeconds--;
+          timerStatus = formatTime(remainingSeconds);
+        });
+      }
+    });
   }
 
-  String formatTime(int total) {
-    final mins = total ~/ 60;
-    final secs = total % 60;
+  String formatTime(int seconds) {
+    final mins = seconds ~/ 60;
+    final secs = seconds % 60;
 
-    return "${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')} remaining";
+    final m = mins.toString().padLeft(2, '0');
+    final s = secs.toString().padLeft(2, '0');
+
+    return "$m:$s remaining";
+  }
+
+  void stopAudio() {
+    countdownTimer?.cancel();
+    controller.pause();
+
+    setState(() {
+      timerStatus = "Stopped";
+      remainingSeconds = 0;
+    });
   }
 
   @override
   void dispose() {
     countdownTimer?.cancel();
+    searchController.dispose();
     timerController.dispose();
-    player.dispose();
+    controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
+
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text("Focus Music"),
+        title: const Text("Audio Search"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          children: [
-            const Text(
-              "Playlists",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight:
-                    FontWeight.bold,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + keyboardSpace),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                height: 0,
+                width: 0,
+                child: YoutubePlayer(
+                  controller: controller,
+                  showVideoProgressIndicator: false,
+                ),
               ),
-            ),
-
-            const SizedBox(height: 12),
-
-            Expanded(
-              child: ListView.builder(
-                itemCount:
-                    tracks.length,
-                itemBuilder:
-                    (context, i) {
-                  final item =
-                      tracks[i];
-
-                  return Card(
-                    child:
-                        ListTile(
-                      leading:
-                          const Icon(
-                        Icons
-                            .music_note,
+              const Icon(
+                Icons.headphones,
+                size: 70,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: searchController,
+                      textInputAction: TextInputAction.search,
+                      decoration: const InputDecoration(
+                        hintText: "Search audio on YouTube",
+                        border: OutlineInputBorder(),
                       ),
-                      title: Text(
-                        item["title"]!,
-                      ),
-                      onTap:
-                          () {
-                        playSong(
-                          item["url"]!,
-                        );
+                      onSubmitted: (value) {
+                        searchYouTube(value);
                       },
                     ),
-                  );
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      searchYouTube(searchController.text);
+                    },
+                    child: const Text("Search"),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              if (isLoading) const LinearProgressIndicator(),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 260,
+                child: ListView.builder(
+                  itemCount: sounds.length,
+                  itemBuilder: (context, index) {
+                    final s = sounds[index];
+
+                    return Card(
+                      child: ListTile(
+                        title: Text(s["title"]!),
+                        trailing: const Icon(Icons.play_arrow),
+                        onTap: () {
+                          playAudio(s["id"]!);
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text("Volume"),
+              Slider(
+                value: volume,
+                min: 0,
+                max: 100,
+                onChanged: (v) {
+                  setState(() {
+                    volume = v;
+                  });
+
+                  controller.setVolume(v.toInt());
                 },
               ),
-            ),
-
-            const SizedBox(height: 10),
-
-            const Text("Volume"),
-
-            Slider(
-              value: volume,
-              min: 0,
-              max: 1,
-              onChanged: (v) {
-                setState(() {
-                  volume = v;
-                });
-                setSound(v);
-              },
-            ),
-
-            TextField(
-              controller:
-                  timerController,
-              keyboardType:
-                  TextInputType
-                      .number,
-              decoration:
-                  const InputDecoration(
-                labelText:
-                    "Timer Minutes",
-                border:
-                    OutlineInputBorder(),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: timerController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        hintText: "Minutes",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: startTimer,
+                    child: const Text("Timer"),
+                  ),
+                ],
               ),
-            ),
-
-            const SizedBox(height: 10),
-
-            Row(
-              children: [
-                Expanded(
-                  child:
-                      ElevatedButton(
-                    onPressed:
-                        startTimer,
-                    child:
-                        const Text(
-                      "Start Timer",
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                    width: 8),
-                Expanded(
-                  child:
-                      ElevatedButton(
-                    onPressed:
-                        () async {
-                      countdownTimer
-                          ?.cancel();
-                      await stopSong();
-
-                      setState(() {
-                        status =
-                            "Stopped";
-                      });
-                    },
-                    child:
-                        const Text(
-                      "Stop",
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            Text(status),
-          ],
+              const SizedBox(height: 12),
+              Center(
+                child: Text(timerStatus),
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: stopAudio,
+                child: const Text("Stop"),
+              ),
+            ],
+          ),
         ),
       ),
     );
