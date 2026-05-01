@@ -26,6 +26,15 @@ class _MusicViewState extends State<MusicView> {
 
   double volume = 100;
 
+  final List<String> presetSearches = [
+    "Interview Pep Talk",
+    "Ocean Waves",
+    "Study Music",
+    "Sleep Music",
+    "White Noise",
+    "Rain Sounds",
+  ];
+
   late YoutubePlayerController controller;
 
   @override
@@ -56,6 +65,8 @@ class _MusicViewState extends State<MusicView> {
     setState(() {
       isLoading = true;
     });
+
+    searchController.text = query;
 
     final url = Uri.parse(
       "https://www.googleapis.com/youtube/v3/search"
@@ -187,6 +198,30 @@ class _MusicViewState extends State<MusicView> {
                 size: 70,
               ),
               const SizedBox(height: 16),
+
+              SizedBox(
+                height: 42,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: presetSearches.length,
+                  itemBuilder: (context, index) {
+                    final term = presetSearches[index];
+
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          searchYouTube(term);
+                        },
+                        child: Text(term),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
               Row(
                 children: [
                   Expanded(
