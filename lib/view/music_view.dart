@@ -33,9 +33,9 @@ class _MusicViewState extends State<MusicView> {
     super.initState();
 
     controller = YoutubePlayerController(
-      initialVideoId: 'jfKfPfyJRdk',
+      initialVideoId: '',
       flags: const YoutubePlayerFlags(
-        autoPlay: true,
+        autoPlay: false,
         mute: false,
         hideControls: true,
         hideThumbnail: true,
