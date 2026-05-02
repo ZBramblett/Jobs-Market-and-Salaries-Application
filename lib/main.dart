@@ -8,7 +8,6 @@ import 'package:finalexam_salaries/view/settingspage.dart';
 import 'package:finalexam_salaries/view/AICareerPage.dart';
 import 'package:finalexam_salaries/view/city_comparer_screen.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -34,8 +33,15 @@ class MyApp extends StatelessWidget {
             ),
           ),
           darkTheme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 35, 82, 45),
+            colorScheme: ColorScheme(
+              primary: Color.fromARGB(255, 175, 255, 175),
+              secondary: Color.fromARGB(255, 100, 255, 100),
+              surface: Color.fromARGB(255, 20, 22, 20),
+              error: Color.fromARGB(255, 255, 0, 0),
+              onPrimary: Color.fromARGB(255, 35, 40, 35),
+              onSecondary: Color.fromARGB(255, 35, 40, 35),
+              onSurface: Color.fromARGB(255, 255, 255, 255),
+              onError: Color.fromARGB(255, 10, 20, 10),
               brightness: Brightness.dark,
             ),
           ),
@@ -44,7 +50,7 @@ class MyApp extends StatelessWidget {
           routes: {
             '/home': (context) => const MainScreen(),
             '/login': (context) => const LoginScreen(),
-            '/signup': (context) => const SignupScreen()
+            '/signup': (context) => const SignupScreen(),
           },
         );
       },
@@ -64,10 +70,10 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     const MyHomePage(title: 'FinalExamSalaries'),
-    const SearchPage(),
-    const SettingsPage(),
     const AICareerPage(),
+    const SearchPage(),
     const CityComparerScreen(),
+    const SettingsPage(),
   ];
 
   @override
@@ -75,18 +81,60 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: IndexedStack(index: _selectedIndex, children: _pages),
       bottomNavigationBar: NavigationBar(
+        surfaceTintColor: Theme.of(context).colorScheme.primary,
+        indicatorColor: WidgetStateColor.resolveWith((states) {
+          final colorScheme = Theme.of(context).colorScheme;
+          return colorScheme.brightness == Brightness.dark
+              ? colorScheme.primary
+              : colorScheme.primary;
+        }),
         selectedIndex: _selectedIndex,
         onDestinationSelected: (int index) {
           setState(() {
             _selectedIndex = index;
           });
         },
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
-          NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
-          NavigationDestination(icon: Icon(Icons.person_search), label: 'AI Careers'),
-          NavigationDestination(icon: Icon(Icons.compare_arrows), label: 'Compare'),
+        destinations: [
+          NavigationDestination(
+            icon: Icon(Icons.home),
+            label: 'Home',
+            selectedIcon: Icon(
+              Icons.home,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_search),
+            label: 'AI Careers',
+            selectedIcon: Icon(
+              Icons.person_search,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.search),
+            label: 'Search',
+            selectedIcon: Icon(
+              Icons.search,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.compare_arrows),
+            label: 'Compare',
+            selectedIcon: Icon(
+              Icons.compare_arrows,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+            selectedIcon: Icon(
+              Icons.settings,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
         ],
       ),
     );

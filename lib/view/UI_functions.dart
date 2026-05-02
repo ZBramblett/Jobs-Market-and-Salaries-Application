@@ -98,7 +98,9 @@ class _CustomButtonState extends State<CustomButton>
         child: ScaleTransition(
           scale: _scaleAnimation,
           child: SizedBox(
-            width: widget.width == 'span' ? double.infinity : null,
+            width: widget.width == 'span'
+                ? MediaQuery.of(context).size.width * 0.95
+                : null,
             child: ElevatedButton(
               onPressed: widget.onPressed,
               style: ElevatedButton.styleFrom(
@@ -170,6 +172,9 @@ class _CustomCardState extends State<CustomCard> {
               offset: const Offset(2, 2),
             ),
           ],
+          border: Theme.of(context).brightness == Brightness.dark
+              ? Border.all(color: scheme.primary.withAlpha(75), width: 0.75)
+              : null,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,6 +288,9 @@ class _CustomSettingsItemState extends State<CustomSettingsItem> {
               offset: const Offset(2, 2),
             ),
           ],
+          border: Theme.of(context).brightness == Brightness.dark
+              ? Border.all(color: scheme.primary.withAlpha(75), width: 0.75)
+              : null,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
