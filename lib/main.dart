@@ -1,3 +1,4 @@
+import 'package:finalexam_salaries/view/riskAnalysisPage.dart';
 import 'package:finalexam_salaries/view/login_screen.dart';
 import 'package:finalexam_salaries/view/signup_screen.dart';
 import 'package:flutter/material.dart';
@@ -72,6 +73,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     const MyHomePage(title: 'FinalExamSalaries'),
     const AICareerPage(),
+    const RiskAnalysisPage(),
     const SearchPage(),
     const CityComparerScreen(),
     const SettingsPage(),
@@ -110,6 +112,14 @@ class _MainScreenState extends State<MainScreen> {
             label: 'AI Careers',
             selectedIcon: Icon(
               Icons.person_search,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+            NavigationDestination(
+            icon: Icon(Icons.person_search),
+            label: 'Risk Analysis',
+            selectedIcon: Icon(
+              Icons.person_search_outlined,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
