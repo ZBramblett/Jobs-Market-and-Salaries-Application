@@ -1,4 +1,5 @@
 import 'package:finalexam_salaries/main.dart';
+import 'package:finalexam_salaries/presenter/auth_presenter.dart';
 import 'package:finalexam_salaries/view/UI_functions.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,16 @@ class SettingsPage extends StatelessWidget {
               initialValue: Theme.of(context).brightness == Brightness.dark,
               onToggle: (value) {
                 themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
+              },
+            ),
+            CustomButton(
+              text: 'Log Out',
+              width: 'span',
+              onPressed: () async {
+                await AuthPresenter().logout();
+                if (context.mounted) {
+                  Navigator.pushReplacementNamed(context, '/login');
+                }
               },
             ),
           ],
