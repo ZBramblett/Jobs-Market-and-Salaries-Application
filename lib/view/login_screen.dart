@@ -139,17 +139,14 @@ class _LoginScreenState extends State<LoginScreen> {
   //   );
   // }
 
-  // void _handleGoogleSignIn() async {
-  //   final result = await _presenter.signInWithGoogle();
-  //   if (result == null) {
-  //     // await notificationPresenter.setupPushNotifications();
-  //     if (mounted) Navigator.pushReplacementNamed(context, '/home');
-  //   } else if (result == 'new_user') {
-  //     if (mounted) Navigator.pushReplacementNamed(context, '/complete-profile');
-  //   } else {
-  //     setState(() => _errorMessage = result);
-  //   }
-  // }
+  void _handleGoogleSignIn() async {
+    final result = await _presenter.signInWithGoogle();
+    if (result == null) {
+      if (mounted) Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      setState(() => _errorMessage = result);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -269,12 +266,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: 'span',
                   onPressed: _handleLogin,
                 ),
-                // CustomButton(
-                //   text: "Sign in with Google",
-                //   style: 'secondary',
-                //   width: 'span',
-                //   onPressed: _handleGoogleSignIn,
-                // ),
+                CustomButton(
+                  text: "Sign in with Google",
+                  style: 'secondary',
+                  width: 'span',
+                  onPressed: _handleGoogleSignIn,
+                ),
                 const SizedBox(height: 16),
                 // Sign Up Link
                 Center(

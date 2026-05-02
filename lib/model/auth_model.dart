@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthModel {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -40,6 +41,26 @@ class AuthModel {
       }
     } catch (e) {
         return 'An unknown error occurred';
+    }
+  }
+
+  Future<String?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return 'Sign in cancelled';
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await _auth.signInWithCredential(credential);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      return e.message ?? 'Google sign in failed';
+    } catch (e) {
+      return 'An unknown error occurred';
     }
   }
 

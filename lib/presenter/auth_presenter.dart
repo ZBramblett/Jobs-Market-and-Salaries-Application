@@ -33,9 +33,9 @@ class AuthPresenter {
   //   return _model.sendPasswordResetEmail(email);
   // }
 
-  // Future<String?> signInWithGoogle() {
-  //   return _model.signInWithGoogle();
-  // }
+  Future<String?> signInWithGoogle() {
+    return _model.signInWithGoogle();
+  }
 
   User? get currentUser => _model.currentUser;
 }
