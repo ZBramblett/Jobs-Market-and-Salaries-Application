@@ -1,9 +1,16 @@
+import 'package:finalexam_salaries/view/login_screen.dart';
+import 'package:finalexam_salaries/view/signup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:finalexam_salaries/view/homepage.dart';
 import 'package:finalexam_salaries/view/searchpage.dart';
 import 'package:finalexam_salaries/view/settingspage.dart';
+import 'package:finalexam_salaries/view/AICareerPage.dart';
+import 'package:finalexam_salaries/view/city_comparer_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -39,7 +46,12 @@ class MyApp extends StatelessWidget {
             ),
           ),
           themeMode: currentMode,
-          home: const MainScreen(),
+          home: const LoginScreen(),
+          routes: {
+            '/home': (context) => const MainScreen(),
+            '/login': (context) => const LoginScreen(),
+            '/signup': (context) => const SignupScreen(),
+          },
         );
       },
     );
@@ -60,6 +72,8 @@ class _MainScreenState extends State<MainScreen> {
     const MyHomePage(title: 'FinalExamSalaries'),
     const SearchPage(),
     const SettingsPage(),
+    const AICareerPage(),
+    const CityComparerScreen(),
   ];
 
   @override
@@ -102,6 +116,22 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Settings',
             selectedIcon: Icon(
               Icons.settings,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_search),
+            label: 'AI Careers',
+            selectedIcon: Icon(
+              Icons.person_search,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.compare_arrows),
+            label: 'Compare',
+            selectedIcon: Icon(
+              Icons.compare_arrows,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "547093597303",
+    "project_id": "finalexam-71489",
+    "storage_bucket": "finalexam-71489.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547093597303:android:7edae7e7fb40b9f4698a72",
+        "android_client_info": {
+          "package_name": "com.example.finalexam_salaries"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "REDACTED_FIREBASE_ANDROID_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
