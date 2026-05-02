@@ -1,3 +1,4 @@
+import 'package:finalexam_salaries/view/riskAnalysisPage.dart';
 import 'package:finalexam_salaries/view/login_screen.dart';
 import 'package:finalexam_salaries/view/signup_screen.dart';
 import 'package:flutter/material.dart';
@@ -74,6 +75,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     const MyHomePage(title: 'FinalExamSalaries'),
     const AICareerPage(),
+    const RiskAnalysisPage(),
     const SearchPage(),
     const MusicView(),
     VideoView(
@@ -87,6 +89,73 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(index: _selectedIndex, children: _pages),
+      bottomNavigationBar: NavigationBar(
+        surfaceTintColor: Theme.of(context).colorScheme.primary,
+        indicatorColor: WidgetStateColor.resolveWith((states) {
+          final colorScheme = Theme.of(context).colorScheme;
+          return colorScheme.brightness == Brightness.dark
+              ? colorScheme.primary
+              : colorScheme.primary;
+        }),
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (int index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        destinations: [
+          NavigationDestination(
+            icon: Icon(Icons.home),
+            label: 'Home',
+            selectedIcon: Icon(
+              Icons.home,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_search),
+            label: 'AI Careers',
+            selectedIcon: Icon(
+              Icons.person_search,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+            NavigationDestination(
+            icon: Icon(Icons.person_search),
+            label: 'Risk Analysis',
+            selectedIcon: Icon(
+              Icons.person_search_outlined,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.search),
+            label: 'Search',
+            selectedIcon: Icon(
+              Icons.search,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.compare_arrows),
+            label: 'Compare',
+            selectedIcon: Icon(
+              Icons.compare_arrows,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+            selectedIcon: Icon(
+              Icons.settings,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+        ],
+      ),
     return ValueListenableBuilder<bool>(
       valueListenable: fullScreenNotifier,
       builder: (_, isFullScreen, _) {
