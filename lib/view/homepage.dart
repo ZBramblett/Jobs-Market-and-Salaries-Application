@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:finalexam_salaries/view/UI_functions.dart';
+import '../presenter/auth_presenter.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -39,7 +40,15 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: .center,
           children: [
-            CustomButton(text: 'Example button', onPressed: _incrementCounter),
+            CustomButton(
+            text: 'Temp Logout',
+            style: 'error',
+            onPressed: () async {
+              await AuthPresenter().logout();
+              if (context.mounted) Navigator.pushReplacementNamed(context, '/login');
+            },
+          ),
+          CustomButton(text: 'Example button', onPressed: _incrementCounter),
             CustomCard(
               title: 'Example card',
               description:
