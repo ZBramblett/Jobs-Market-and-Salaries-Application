@@ -1,4 +1,3 @@
-import 'package:finalexam_salaries/model/graphics_model.dart';
 import 'package:finalexam_salaries/view/login_screen.dart';
 import 'package:finalexam_salaries/view/signup_screen.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ import 'package:finalexam_salaries/view/searchpage.dart';
 import 'package:finalexam_salaries/view/settingspage.dart';
 import 'package:finalexam_salaries/view/AICareerPage.dart';
 import 'package:finalexam_salaries/view/city_comparer_screen.dart';
+import 'package:finalexam_salaries/view/graphics_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
