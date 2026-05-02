@@ -51,6 +51,7 @@ class _CustomButtonState extends State<CustomButton>
 
   @override
   void dispose() {
+    _controller.dispose();
     themePresenter.removeListener(_onThemeChanged);
     super.dispose();
   }
