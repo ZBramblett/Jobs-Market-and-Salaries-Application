@@ -1,293 +1,235 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class VideoView extends StatefulWidget {
-  const VideoView({super.key});
+  const VideoView({super.key, this.onFullScreenChanged});
+
+  final ValueChanged<bool>? onFullScreenChanged;
 
   @override
-  State<VideoView> createState() =>
-      _VideoViewState();
+  State<VideoView> createState() => _VideoViewState();
 }
 
-class _VideoViewState
-    extends State<VideoView> {
-  final TextEditingController
-      searchController =
-      TextEditingController();
+class _VideoViewState extends State<VideoView> {
+  static const String apiKey = String.fromEnvironment('YOUTUBE_API_KEY');
+  List<Map<String, String>> videos = [];
 
-  bool showSavedOnly = false;
+  final TextEditingController searchController = TextEditingController();
 
-  String selectedCategory =
-      "All";
+  bool isLoading = false;
 
-  final List<String> categories = [
-    "All",
-    "Interview",
-    "Resume",
-    "Finance",
-    "Coding",
-    "Stress",
+  final List<String> presetSearches = [
+    "Software Engineering Jobs and Salaries",
+    "Coding interview prep",
+    "Coding interview mock interview",
+    "Top tech companies",
+    "Coding interview questions and answers",
+    "Software engineering career development",
   ];
 
-  final List<Map<String, String>>
-      videos = [
-    {
-      "title":
-          "Tell Me About Yourself",
-      "url":
-          "https://www.youtube.com/watch?v=HG68Ymazo18",
-      "category":
-          "Interview",
-    },
-    {
-      "title":
-          "Best Resume Tips",
-      "url":
-          "https://www.youtube.com/watch?v=Tt08KmFfIYQ",
-      "category":
-          "Resume",
-    },
-    {
-      "title":
-          "Finance Career Guide",
-      "url":
-          "https://www.youtube.com/watch?v=ws9Xsl0Y0CQ",
-      "category":
-          "Finance",
-    },
-    {
-      "title":
-          "Coding Interview Prep",
-      "url":
-          "https://www.youtube.com/watch?v=1qw5ITr3k9E",
-      "category":
-          "Coding",
-    },
-  ];
+  late YoutubePlayerController controller;
 
-  final List<Map<String, String>>
-      saved = [];
-
-  Future<void> openVideo(
-    String url,
-  ) async {
-    await launchUrl(
-      Uri.parse(url),
+  @override
+  void initState() {
+    super.initState();
+    controller = YoutubePlayerController(
+      initialVideoId: "ft0owvS5tQA",
+      flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
     );
+    controller.setVolume(100);
   }
 
-  bool isSaved(
-    Map<String, String> v,
-  ) {
-    return saved.any(
-      (item) =>
-          item["title"] ==
-          v["title"],
+  Future<void> searchYouTube(String query) async {
+    FocusScope.of(context).unfocus();
+
+    if (query.isEmpty) return;
+
+    setState(() => isLoading = true);
+
+    searchController.text = query;
+
+    final url = Uri.parse(
+      "https://www.googleapis.com/youtube/v3/search"
+      "?part=snippet&type=video&maxResults=10&q=$query jobs salaries&key=$apiKey",
     );
-  }
 
-  void toggleSave(
-    Map<String, String> v,
-  ) {
-    setState(() {
-      if (isSaved(v)) {
-        saved.removeWhere(
-          (item) =>
-              item["title"] ==
-              v["title"],
-        );
-      } else {
-        saved.add(v);
-      }
-    });
-  }
+    final response = await http.get(url);
 
-  List<Map<String, String>>
-      get displayList {
-    List<Map<String, String>>
-        list =
-        showSavedOnly
-            ? saved
-            : videos;
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final items = data['items'] as List;
 
-    if (selectedCategory !=
-        "All") {
-      list = list
-          .where(
-            (item) =>
-                item[
-                    "category"] ==
-                selectedCategory,
-          )
-          .toList();
+      setState(() {
+        videos = items
+            .where((item) => item['id']?['videoId'] != null)
+            .map<Map<String, String>>((item) {
+              final snippet = item['snippet'] as Map<String, dynamic>;
+              final idMap = item['id'] as Map<String, dynamic>;
+
+              return {
+                "title": snippet['title'].toString(),
+                "id": idMap['videoId'].toString(),
+              };
+            })
+            .toList();
+      });
     }
 
-    if (searchController
-        .text
-        .isNotEmpty) {
-      list = list
-          .where(
-            (item) => item[
-                    "title"]!
-                .toLowerCase()
-                .contains(
-                  searchController
-                      .text
-                      .toLowerCase(),
-                ),
-          )
-          .toList();
-    }
+    setState(() => isLoading = false);
+  }
 
-    return list;
+  void loadVideo(String id) {
+    controller.load(id);
   }
 
   @override
   void dispose() {
+    widget.onFullScreenChanged?.call(false);
+    controller.dispose();
     searchController.dispose();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.edgeToEdge,
+    );
+
     super.dispose();
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Career Videos",
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                showSavedOnly =
-                    !showSavedOnly;
-              });
-            },
-            icon: Icon(
-              showSavedOnly
-                  ? Icons.list
-                  : Icons.bookmark,
-            ),
-          ),
+  Widget build(BuildContext context) {
+    return YoutubePlayerBuilder(
+      onEnterFullScreen: () {
+        widget.onFullScreenChanged?.call(true);
+        SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.immersiveSticky,
+        );
+      },
+      onExitFullScreen: () {
+        widget.onFullScreenChanged?.call(false);
+        SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.edgeToEdge,
+        );
+      },
+      player: YoutubePlayer(
+        controller: controller,
+        showVideoProgressIndicator: true,
+        onReady: () {
+          controller.addListener(() {
+            if (controller.value.isFullScreen) {
+              SystemChrome.setEnabledSystemUIMode(
+                SystemUiMode.immersiveSticky,
+              );
+            } else {
+              SystemChrome.setEnabledSystemUIMode(
+                SystemUiMode.edgeToEdge,
+              );
+            }
+          });
+        },
+        bottomActions: const [
+          CurrentPosition(),
+          ProgressBar(isExpanded: true),
+          RemainingDuration(),
+          FullScreenButton(),
         ],
       ),
+      builder: (context, player) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Video Browser"),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: player,
+                ),
 
-      body: Padding(
-        padding:
-            const EdgeInsets.all(
-          14,
-        ),
-        child: Column(
-          children: [
-            TextField(
-              controller:
-                  searchController,
-              onChanged: (v) {
-                setState(() {});
-              },
-              decoration:
-                  const InputDecoration(
-                hintText:
-                    "Search videos",
-                border:
-                    OutlineInputBorder(),
-              ),
-            ),
+                const SizedBox(height: 15),
 
-            const SizedBox(
-                height: 10),
+                SizedBox(
+                  height: 42,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: presetSearches.length,
+                    itemBuilder: (context, index) {
+                      final term = presetSearches[index];
 
-            DropdownButton<String>(
-              value:
-                  selectedCategory,
-              isExpanded: true,
-              items: categories
-                  .map(
-                    (item) =>
-                        DropdownMenuItem(
-                      value:
-                          item,
-                      child:
-                          Text(
-                        item,
-                      ),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (v) {
-                setState(() {
-                  selectedCategory =
-                      v!;
-                });
-              },
-            ),
-
-            const SizedBox(
-                height: 10),
-
-            Expanded(
-              child:
-                  ListView.builder(
-                itemCount:
-                    displayList
-                        .length,
-                itemBuilder:
-                    (context,
-                        i) {
-                  final item =
-                      displayList[
-                          i];
-
-                  return Card(
-                    child:
-                        ListTile(
-                      leading:
-                          const Icon(
-                        Icons
-                            .play_circle,
-                      ),
-                      title: Text(
-                        item["title"]!,
-                      ),
-                      subtitle:
-                          Text(
-                        item[
-                            "category"]!,
-                      ),
-                      trailing:
-                          IconButton(
-                        icon: Icon(
-                          isSaved(
-                                item,
-                              )
-                              ? Icons
-                                  .bookmark
-                              : Icons
-                                  .bookmark_border,
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            searchYouTube(term);
+                          },
+                          child: Text(term),
                         ),
-                        onPressed:
-                            () {
-                          toggleSave(
-                            item,
-                          );
-                        },
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: searchController,
+                        decoration: const InputDecoration(
+                          hintText: "Search Jobs and Salaries",
+                          border: OutlineInputBorder(),
+                        ),
+                        onSubmitted: searchYouTube,
                       ),
-                      onTap:
-                          () {
-                        openVideo(
-                          item["url"]!,
-                        );
-                      },
                     ),
-                  );
-                },
-              ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        searchYouTube(searchController.text);
+                      },
+                      child: const Text("Search"),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+
+                if (isLoading) const LinearProgressIndicator(),
+
+                const SizedBox(height: 10),
+
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: videos.length,
+                    itemBuilder: (context, index) {
+                      final v = videos[index];
+
+                      return Card(
+                        child: ListTile(
+                          title: Text(v["title"]!),
+                          trailing: const Icon(Icons.play_arrow),
+                          onTap: () {
+                            loadVideo(v["id"]!);
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
