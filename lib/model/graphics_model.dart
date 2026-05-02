@@ -7,7 +7,7 @@ import 'ai_job_data.dart';
 class GraphicsModel {
   GraphicsModel();
 
-  Future <List<AIJob>> getJobData() async {
+  Future <List<AIJob>> getAIJobData() async {
     return await AIJobData.instance.loadJobs();
   }
 }
