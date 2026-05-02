@@ -64,6 +64,17 @@ class AuthModel {
     }
   }
 
+  Future<String?> signInAnonymously() async {
+    try {
+      await _auth.signInAnonymously();
+      return null;
+    } on FirebaseAuthException catch (e) {
+      return e.message ?? 'Guest sign in failed';
+    } catch (e) {
+      return 'An unknown error occurred';
+    }
+  }
+
   Future<String?> sendPasswordResetEmail(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);

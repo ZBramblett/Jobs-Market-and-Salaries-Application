@@ -31,6 +31,10 @@ class AuthPresenter {
     return _model.sendPasswordResetEmail(email);
   }
 
+  Future<String?> signInAnonymously() {
+    return _model.signInAnonymously();
+  }
+
   Future<String?> signInWithGoogle() {
     return _model.signInWithGoogle();
   }

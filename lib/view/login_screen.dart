@@ -139,6 +139,15 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  void _handleGuestSignIn() async {
+    final error = await _presenter.signInAnonymously();
+    if (error == null) {
+      if (mounted) Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      setState(() => _errorMessage = error);
+    }
+  }
+
   void _handleGoogleSignIn() async {
     final result = await _presenter.signInWithGoogle();
     if (result == null) {
@@ -162,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 // App Title
                 const Text(
-                  'DreamzZZzz',
+                  'Jobs Market & Salaries Application',
                   style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
@@ -271,6 +280,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: 'secondary',
                   width: 'span',
                   onPressed: _handleGoogleSignIn,
+                ),
+                CustomButton(
+                  text: "Continue as Guest",
+                  style: 'secondary',
+                  width: 'span',
+                  onPressed: _handleGuestSignIn,
                 ),
                 const SizedBox(height: 16),
                 // Sign Up Link
