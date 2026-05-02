@@ -19,12 +19,15 @@ class PieChartWidget extends StatelessWidget {
         children: [
           Text(title),
           SizedBox(height: 10),
-          PieChart(
-            PieChartData(
-              sections: sections,
-              sectionsSpace: 2,
-              centerSpaceRadius: 0,
-            )
+          AspectRatio(
+            aspectRatio: 1.3,
+            child: PieChart(
+              PieChartData(
+                sections: sections,
+                sectionsSpace: 2,
+                centerSpaceRadius: 0,
+              )
+            ),
           )
         ],
       )
