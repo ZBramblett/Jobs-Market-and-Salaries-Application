@@ -98,7 +98,9 @@ class _CustomButtonState extends State<CustomButton>
         child: ScaleTransition(
           scale: _scaleAnimation,
           child: SizedBox(
-            width: widget.width == 'span' ? double.infinity : null,
+            width: widget.width == 'span'
+                ? MediaQuery.of(context).size.width * 0.95
+                : null,
             child: ElevatedButton(
               onPressed: widget.onPressed,
               style: ElevatedButton.styleFrom(

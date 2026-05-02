@@ -103,22 +103,7 @@ class _MainScreenState extends State<MainScreen> {
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.search),
-            label: 'Search',
-            selectedIcon: Icon(
-              Icons.search,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-            selectedIcon: Icon(
-              Icons.settings,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
+
           NavigationDestination(
             icon: Icon(Icons.person_search),
             label: 'AI Careers',
@@ -128,10 +113,26 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
           NavigationDestination(
+            icon: Icon(Icons.search),
+            label: 'Search',
+            selectedIcon: Icon(
+              Icons.search,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          NavigationDestination(
             icon: Icon(Icons.compare_arrows),
             label: 'Compare',
             selectedIcon: Icon(
               Icons.compare_arrows,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+            selectedIcon: Icon(
+              Icons.settings,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
