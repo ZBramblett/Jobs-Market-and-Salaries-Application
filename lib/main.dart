@@ -6,6 +6,7 @@ import 'package:finalexam_salaries/view/homepage.dart';
 import 'package:finalexam_salaries/view/searchpage.dart';
 import 'package:finalexam_salaries/view/settingspage.dart';
 import 'package:finalexam_salaries/view/AICareerPage.dart';
+import 'package:finalexam_salaries/view/city_comparer_screen.dart';
 
 
 void main() async {
@@ -66,6 +67,7 @@ class _MainScreenState extends State<MainScreen> {
     const SearchPage(),
     const SettingsPage(),
     const AICareerPage(),
+    const CityComparerScreen(),
   ];
 
   @override
@@ -84,7 +86,7 @@ class _MainScreenState extends State<MainScreen> {
           NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
           NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
           NavigationDestination(icon: Icon(Icons.person_search), label: 'AI Careers'),
-
+          NavigationDestination(icon: Icon(Icons.compare_arrows), label: 'Compare'),
         ],
       ),
     );
