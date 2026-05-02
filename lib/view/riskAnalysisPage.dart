@@ -80,13 +80,7 @@ class _RiskAnalysisPageState extends State<RiskAnalysisPage> {
         foregroundColor: scheme.onPrimary,
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: themePresenter.getGradient(),
-          ),
-        ),
+          color: scheme.surface,
         child: Column(
           children: [
             //  Job title selector + compare button 

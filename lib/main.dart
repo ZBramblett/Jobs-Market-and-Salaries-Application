@@ -88,7 +88,7 @@ class _MainScreenState extends State<MainScreen> {
           NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
           NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
           NavigationDestination(icon: Icon(Icons.person_search), label: 'AI Careers'),
-          NavigationDestination(icon: Icon(Icons.person_search_outlined), label: 'Risk Analysis')
+          NavigationDestination(icon: Icon(Icons.person_search_outlined), label: 'Risk Analysis'),
           NavigationDestination(icon: Icon(Icons.compare_arrows), label: 'Compare'),
         ],
       ),
