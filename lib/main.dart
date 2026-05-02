@@ -1,12 +1,18 @@
 import 'package:finalexam_salaries/view/riskAnalysisPage.dart';
+import 'package:finalexam_salaries/view/login_screen.dart';
+import 'package:finalexam_salaries/view/signup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:finalexam_salaries/view/homepage.dart';
 import 'package:finalexam_salaries/view/searchpage.dart';
 import 'package:finalexam_salaries/view/settingspage.dart';
 import 'package:finalexam_salaries/view/AICareerPage.dart';
+import 'package:finalexam_salaries/view/city_comparer_screen.dart';
 
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -35,7 +41,12 @@ class MyApp extends StatelessWidget {
             ),
           ),
           themeMode: currentMode,
-          home: const MainScreen(),
+          home: const LoginScreen(),
+          routes: {
+            '/home': (context) => const MainScreen(),
+            '/login': (context) => const LoginScreen(),
+            '/signup': (context) => const SignupScreen()
+          },
         );
       },
     );
@@ -58,6 +69,7 @@ class _MainScreenState extends State<MainScreen> {
     const SettingsPage(),
     const AICareerPage(),
     const RiskAnalysisPage(),
+    const CityComparerScreen(),
   ];
 
   @override
@@ -77,7 +89,7 @@ class _MainScreenState extends State<MainScreen> {
           NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
           NavigationDestination(icon: Icon(Icons.person_search), label: 'AI Careers'),
           NavigationDestination(icon: Icon(Icons.person_search_outlined), label: 'Risk Analysis')
-
+          NavigationDestination(icon: Icon(Icons.compare_arrows), label: 'Compare'),
         ],
       ),
     );
