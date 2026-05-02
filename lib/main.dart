@@ -5,6 +5,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:finalexam_salaries/view/homepage.dart';
 import 'package:finalexam_salaries/view/searchpage.dart';
 import 'package:finalexam_salaries/view/settingspage.dart';
+import 'package:finalexam_salaries/view/AICareerPage.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,6 +65,7 @@ class _MainScreenState extends State<MainScreen> {
     const MyHomePage(title: 'FinalExamSalaries'),
     const SearchPage(),
     const SettingsPage(),
+    const AICareerPage(),
   ];
 
   @override
@@ -80,6 +83,8 @@ class _MainScreenState extends State<MainScreen> {
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
           NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
           NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
+          NavigationDestination(icon: Icon(Icons.person_search), label: 'AI Careers'),
+
         ],
       ),
     );
