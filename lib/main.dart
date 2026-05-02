@@ -1,9 +1,14 @@
+import 'package:finalexam_salaries/view/login_screen.dart';
+import 'package:finalexam_salaries/view/signup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:finalexam_salaries/view/homepage.dart';
 import 'package:finalexam_salaries/view/searchpage.dart';
 import 'package:finalexam_salaries/view/settingspage.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -32,7 +37,12 @@ class MyApp extends StatelessWidget {
             ),
           ),
           themeMode: currentMode,
-          home: const MainScreen(),
+          home: const LoginScreen(),
+          routes: {
+            '/home': (context) => const MainScreen(),
+            '/login': (context) => const LoginScreen(),
+            '/signup': (context) => const SignupScreen()
+          },
         );
       },
     );
