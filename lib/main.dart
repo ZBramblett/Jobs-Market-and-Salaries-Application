@@ -70,10 +70,10 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     const MyHomePage(title: 'FinalExamSalaries'),
-    const SearchPage(),
-    const SettingsPage(),
     const AICareerPage(),
+    const SearchPage(),
     const CityComparerScreen(),
+    const SettingsPage(),
   ];
 
   @override
@@ -103,7 +103,6 @@ class _MainScreenState extends State<MainScreen> {
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
-
           NavigationDestination(
             icon: Icon(Icons.person_search),
             label: 'AI Careers',
