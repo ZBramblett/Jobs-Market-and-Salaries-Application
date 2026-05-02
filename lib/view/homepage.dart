@@ -40,15 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: .center,
           children: [
-            CustomButton(
-            text: 'Temp Logout',
-            style: 'error',
-            onPressed: () async {
-              await AuthPresenter().logout();
-              if (context.mounted) Navigator.pushReplacementNamed(context, '/login');
-            },
-          ),
-          CustomButton(text: 'Example button', onPressed: _incrementCounter),
+            CustomButton(text: 'Example button', onPressed: _incrementCounter),
             CustomCard(
               title: 'Example card',
               description:

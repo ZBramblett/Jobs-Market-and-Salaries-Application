@@ -1,0 +1,4 @@
+* text=auto
+*.cc text eol=lf
+*.cmake text eol=lf
+*.dart text eol=lf
