@@ -1,3 +1,4 @@
+import 'package:finalexam_salaries/view/riskAnalysisPage.dart';
 import 'package:flutter/material.dart';
 import 'package:finalexam_salaries/view/homepage.dart';
 import 'package:finalexam_salaries/view/searchpage.dart';
@@ -56,6 +57,7 @@ class _MainScreenState extends State<MainScreen> {
     const SearchPage(),
     const SettingsPage(),
     const AICareerPage(),
+    const RiskAnalysisPage(),
   ];
 
   @override
@@ -74,6 +76,7 @@ class _MainScreenState extends State<MainScreen> {
           NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
           NavigationDestination(icon: Icon(Icons.settings), label: 'Settings'),
           NavigationDestination(icon: Icon(Icons.person_search), label: 'AI Careers'),
+          NavigationDestination(icon: Icon(Icons.person_search_outlined), label: 'Risk Analysis')
 
         ],
       ),
