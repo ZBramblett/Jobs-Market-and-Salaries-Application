@@ -159,209 +159,114 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final border = themePresenter.BORDER_RADIUS.toDouble();
+    final scheme = Theme.of(context).colorScheme;
+
+    InputDecoration fieldDecoration(String label, IconData icon) =>
+        InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(color: scheme.onPrimary),
+          filled: true,
+          fillColor: scheme.primary.withAlpha(125),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(border),
+            borderSide: BorderSide(color: scheme.onPrimary, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(border),
+            borderSide: BorderSide(color: scheme.onPrimary, width: 1),
+          ),
+          prefixIcon: Icon(icon),
+          prefixIconColor: scheme.onPrimary,
+        );
+
     return Scaffold(
       appBar: AppBar(automaticallyImplyLeading: false),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // App Title
-                const Text(
-                  'Jobs Market & Salaries Application',
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Jobs Market &\nSalaries Application',
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 40),
+
+              TextField(
+                controller: _emailController,
+                decoration: fieldDecoration('Email', Icons.email),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _passwordController,
+                decoration: fieldDecoration('Password', Icons.lock),
+                obscureText: true,
+              ),
+
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: _handleForgotPassword,
+                  child: const Text('Forgot password?'),
+                ),
+              ),
+
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(color: scheme.error),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 48),
-
-                // Email Field
-                TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-
-                    filled: true,
-                    fillColor: Theme.of(
-                      context,
-                    ).colorScheme.primary.withAlpha(125),
-
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        themePresenter.BORDER_RADIUS.toDouble(),
-                      ),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        width: 1,
-                      ),
-                    ),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        themePresenter.BORDER_RADIUS.toDouble(),
-                      ),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        width: 1,
-                      ),
-                    ),
-
-                    prefixIcon: Icon(Icons.lock),
-                    prefixIconColor: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 16),
-                // Password Field
-                TextField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    labelStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-
-                    filled: true,
-                    fillColor: Theme.of(
-                      context,
-                    ).colorScheme.primary.withAlpha(125),
-
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        themePresenter.BORDER_RADIUS.toDouble(),
-                      ),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        width: 1,
-                      ),
-                    ),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        themePresenter.BORDER_RADIUS.toDouble(),
-                      ),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        width: 1,
-                      ),
-                    ),
-
-                    prefixIcon: Icon(Icons.lock),
-                    prefixIconColor: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                  obscureText: true,
-                ),
-                const SizedBox(height: 24),
-                // Error Message
-                if (_errorMessage != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Text(
-                      _errorMessage!,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                // Login Button
-                CustomButton(
-                  text: 'Login',
-                  width: 'span',
-                  onPressed: _handleLogin,
-                ),
-                CustomButton(
-                  text: "Sign in with Google",
-                  style: 'secondary',
-                  width: 'span',
-                  onPressed: _handleGoogleSignIn,
-                ),
-                CustomButton(
-                  text: "Continue as Guest",
-                  style: 'secondary',
-                  width: 'span',
-                  onPressed: _handleGuestSignIn,
-                ),
-                const SizedBox(height: 16),
-                // Sign Up Link
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.secondary,
-                      borderRadius: BorderRadius.circular(
-                        themePresenter.BORDER_RADIUS.toDouble(),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text("Don't have an account? "),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/signup');
-                          },
-                          style: TextButton.styleFrom(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Theme.of(
-                                context,
-                              ).colorScheme.onPrimary,
-                            ),
-                            foregroundColor: Theme.of(
-                              context,
-                            ).colorScheme.onPrimary,
-                          ),
-                          child: const Text('Sign Up'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      borderRadius: BorderRadius.circular(
-                        themePresenter.BORDER_RADIUS.toDouble(),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text("Forgot your password? "),
-                        TextButton(
-                          onPressed: () {
-                            _handleForgotPassword();
-                          },
-                          style: TextButton.styleFrom(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Theme.of(
-                                context,
-                              ).colorScheme.onPrimary,
-                            ),
-                            foregroundColor: Theme.of(
-                              context,
-                            ).colorScheme.onPrimary,
-                          ),
-                          child: const Text('Reset Password'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ],
-            ),
+              const SizedBox(height: 8),
+
+              CustomButton(text: 'Login', width: 'span', onPressed: _handleLogin),
+              const SizedBox(height: 24),
+
+              Row(
+                children: [
+                  const Expanded(child: Divider()),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('or', style: TextStyle(color: scheme.onSurface.withAlpha(150))),
+                  ),
+                  const Expanded(child: Divider()),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              CustomButton(
+                text: 'Sign in with Google',
+                style: 'secondary',
+                width: 'span',
+                onPressed: _handleGoogleSignIn,
+              ),
+              const SizedBox(height: 8),
+              CustomButton(
+                text: 'Continue as Guest',
+                style: 'secondary',
+                width: 'span',
+                onPressed: _handleGuestSignIn,
+              ),
+              const SizedBox(height: 24),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Don't have an account?"),
+                  TextButton(
+                    onPressed: () => Navigator.pushReplacementNamed(context, '/signup'),
+                    child: const Text('Sign Up'),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
