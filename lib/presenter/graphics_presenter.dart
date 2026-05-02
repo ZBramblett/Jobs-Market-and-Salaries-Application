@@ -1,5 +1,6 @@
 import 'package:finalexam_salaries/model/ai_career_search_model.dart';
 import '../model/graphics_model.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class GraphicsPresenter {
   GraphicsModel model = GraphicsModel();
@@ -13,6 +14,10 @@ class GraphicsPresenter {
   }
 
   //Method to build line chart
+
+
+  //Helper Methods for building line chart
+
 
   //Method to build pie chart
 
