@@ -113,6 +113,14 @@ class _MainScreenState extends State<MainScreen> {
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
+            NavigationDestination(
+            icon: Icon(Icons.person_search),
+            label: 'Risk Analysis',
+            selectedIcon: Icon(
+              Icons.person_search_outlined,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
           NavigationDestination(
             icon: Icon(Icons.search),
             label: 'Search',

@@ -60,7 +60,7 @@ class _RiskAnalysisPageState extends State<RiskAnalysisPage> {
       case 'High Risk':
         return scheme.error;
       case 'Medium Risk':
-        return scheme.tertiary;
+        return scheme.primary.withAlpha(255).withRed(255);
       default:
         return scheme.primary;
     }
@@ -127,7 +127,7 @@ class _RiskAnalysisPageState extends State<RiskAnalysisPage> {
                     ),
             ),
 
-            // ----- Results -----
+            //  Results 
             Expanded(child: _buildResults(scheme)),
           ],
         ),
@@ -179,7 +179,6 @@ class _RiskAnalysisPageState extends State<RiskAnalysisPage> {
               title: '#${index + 1}  ${summary.region}',
               description: description,
             ),
-            // Small color pill indicating the risk category.
             Positioned(
               right: 24,
               top: 18,
