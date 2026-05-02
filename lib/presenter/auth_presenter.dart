@@ -27,11 +27,9 @@ class AuthPresenter {
     return _model.currentUser?.email;
   }
 
-//Disabling for now will implement next
-
-  // Future<String?> sendPasswordResetEmail(String email) {
-  //   return _model.sendPasswordResetEmail(email);
-  // }
+  Future<String?> sendPasswordResetEmail(String email) {
+    return _model.sendPasswordResetEmail(email);
+  }
 
   Future<String?> signInWithGoogle() {
     return _model.signInWithGoogle();

@@ -32,112 +32,112 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // void _handleForgotPassword() async {
-  //   final dialogEmailController = TextEditingController(
-  //     text: _emailController.text.trim(),
-  //   );
+  void _handleForgotPassword() async {
+    final dialogEmailController = TextEditingController(
+      text: _emailController.text.trim(),
+    );
 
-  //   await showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       String? dialogError;
-  //       bool sent = false;
+    await showDialog(
+      context: context,
+      builder: (context) {
+        String? dialogError;
+        bool sent = false;
 
-  //       return StatefulBuilder(
-  //         builder: (context, setDialogState) {
-  //           return AlertDialog(
-  //             title: const Text('Reset Password'),
-  //             content: Column(
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: [
-  //                 const Text(
-  //                   'Enter your email and we\'ll send you a password reset link.',
-  //                 ),
-  //                 const SizedBox(height: 16),
-  //                 TextField(
-  //                   controller: dialogEmailController,
-  //                   keyboardType: TextInputType.emailAddress,
-  //                   decoration: InputDecoration(
-  //                     labelText: 'Email',
-  //                     labelStyle: TextStyle(
-  //                       color: Theme.of(context).colorScheme.onPrimary,
-  //                     ),
-  //                     filled: true,
-  //                     fillColor: Theme.of(
-  //                       context,
-  //                     ).colorScheme.primary.withAlpha(125),
-  //                     border: OutlineInputBorder(
-  //                       borderRadius: BorderRadius.circular(
-  //                         themePresenter.BORDER_RADIUS.toDouble(),
-  //                       ),
-  //                     ),
-  //                     focusedBorder: OutlineInputBorder(
-  //                       borderRadius: BorderRadius.circular(
-  //                         themePresenter.BORDER_RADIUS.toDouble(),
-  //                       ),
-  //                       borderSide: BorderSide(
-  //                         color: Theme.of(context).colorScheme.onPrimary,
-  //                       ),
-  //                     ),
-  //                     prefixIcon: const Icon(Icons.email),
-  //                     prefixIconColor: Theme.of(context).colorScheme.onPrimary,
-  //                   ),
-  //                 ),
-  //                 if (dialogError != null) ...[
-  //                   const SizedBox(height: 8),
-  //                   Text(
-  //                     dialogError!,
-  //                     style: TextStyle(
-  //                       color: Theme.of(context).colorScheme.error,
-  //                       fontSize: 12,
-  //                     ),
-  //                   ),
-  //                 ],
-  //                 if (sent) ...[
-  //                   const SizedBox(height: 8),
-  //                   Text(
-  //                     'Reset link sent! Check your inbox.',
-  //                     style: TextStyle(
-  //                       color: Theme.of(context).colorScheme.primary,
-  //                       fontSize: 12,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ],
-  //             ),
-  //             actions: [
-  //               TextButton(
-  //                 onPressed: () => Navigator.pop(context),
-  //                 child: const Text('Cancel'),
-  //               ),
-  //               TextButton(
-  //                 onPressed: sent
-  //                     ? null
-  //                     : () async {
-  //                         final email = dialogEmailController.text.trim();
-  //                         if (email.isEmpty) {
-  //                           setDialogState(
-  //                             () => dialogError = 'Please enter your email.',
-  //                           );
-  //                           return;
-  //                         }
-  //                         final error = await _presenter.sendPasswordResetEmail(
-  //                           email,
-  //                         );
-  //                         setDialogState(() {
-  //                           dialogError = error;
-  //                           sent = error == null;
-  //                         });
-  //                       },
-  //                 child: const Text('Send Link'),
-  //               ),
-  //             ],
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Reset Password'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Enter your email and we\'ll send you a password reset link.',
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: dialogEmailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                      filled: true,
+                      fillColor: Theme.of(
+                        context,
+                      ).colorScheme.primary.withAlpha(125),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          themePresenter.BORDER_RADIUS.toDouble(),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          themePresenter.BORDER_RADIUS.toDouble(),
+                        ),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                      prefixIcon: const Icon(Icons.email),
+                      prefixIconColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ),
+                  if (dialogError != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      dialogError!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                  if (sent) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      'Reset link sent! Check your inbox.',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: sent
+                      ? null
+                      : () async {
+                          final email = dialogEmailController.text.trim();
+                          if (email.isEmpty) {
+                            setDialogState(
+                              () => dialogError = 'Please enter your email.',
+                            );
+                            return;
+                          }
+                          final error = await _presenter.sendPasswordResetEmail(
+                            email,
+                          );
+                          setDialogState(() {
+                            dialogError = error;
+                            sent = error == null;
+                          });
+                        },
+                  child: const Text('Send Link'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   void _handleGoogleSignIn() async {
     final result = await _presenter.signInWithGoogle();
@@ -309,43 +309,42 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                // const SizedBox(height: 8),
-                // // Forgot Password Link
-                // Center(
-                //   child: Container(
-                //     padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
-                //     decoration: BoxDecoration(
-                //       color: Theme.of(context).colorScheme.primary,
-                //       borderRadius: BorderRadius.circular(
-                //         themePresenter.BORDER_RADIUS.toDouble(),
-                //       ),
-                //     ),
-                //     child: Row(
-                //       mainAxisSize: MainAxisSize.min,
-                //       children: [
-                //         const Text("Forgot your password? "),
-                //         TextButton(
-                //           onPressed: () {
-                //             _handleForgotPassword();
-                //           },
-                //           style: TextButton.styleFrom(
-                //             textStyle: TextStyle(
-                //               fontWeight: FontWeight.w600,
-                //               decoration: TextDecoration.underline,
-                //               decorationColor: Theme.of(
-                //                 context,
-                //               ).colorScheme.onPrimary,
-                //             ),
-                //             foregroundColor: Theme.of(
-                //               context,
-                //             ).colorScheme.onPrimary,
-                //           ),
-                //           child: const Text('Reset Password'),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // ),
+                const SizedBox(height: 8),
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: BorderRadius.circular(
+                        themePresenter.BORDER_RADIUS.toDouble(),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text("Forgot your password? "),
+                        TextButton(
+                          onPressed: () {
+                            _handleForgotPassword();
+                          },
+                          style: TextButton.styleFrom(
+                            textStyle: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Theme.of(
+                                context,
+                              ).colorScheme.onPrimary,
+                            ),
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary,
+                          ),
+                          child: const Text('Reset Password'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

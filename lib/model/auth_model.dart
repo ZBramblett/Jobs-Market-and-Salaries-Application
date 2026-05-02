@@ -64,6 +64,24 @@ class AuthModel {
     }
   }
 
+  Future<String?> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'invalid-email':
+          return 'Please enter a valid email address';
+        case 'user-not-found':
+          return 'No account found with that email';
+        default:
+          return 'An unknown error occurred';
+      }
+    } catch (e) {
+      return 'An unknown error occurred';
+    }
+  }
+
   Future<void> signOut() async {
     await _auth.signOut();
   }
