@@ -11,7 +11,7 @@ class GraphicsPresenter {
 
   //Get the data initially and store it in the presenter for all sorts of computations
   Future<void> fetchAIJobData() async {
-    AIJobs ?? await model.getAIJobData();
+    AIJobs ??= await model.getAIJobData();
   }
 
   //Group jobs by year

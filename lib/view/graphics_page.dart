@@ -1,3 +1,5 @@
+import 'package:finalexam_salaries/model/ai_career_search_model.dart';
+import 'package:finalexam_salaries/presenter/graphics_presenter.dart';
 import 'package:finalexam_salaries/view/UI_functions.dart';
 import 'package:finalexam_salaries/widgets/line_chart_widget.dart';
 import 'package:finalexam_salaries/widgets/pie_chart_widget.dart';
@@ -13,28 +15,18 @@ class GraphicsPageScreen extends StatefulWidget {
 
 class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
 
+  final GraphicsPresenter _presenter = GraphicsPresenter();
+
   String currentDataSet = 'ai';
   String currentStyle = 'distribution';
-  String currentMetric = 'salary';
+  String currentMetric = 'experience';
 
-  
-  //TEMPORARY these values are here for testing purposes
-  final List<PieChartSectionData> placeHolderData = [
-    PieChartSectionData(value: 40, color: Colors.blue, title: 'A', radius: 120),
-    PieChartSectionData(value: 30, color: Colors.red, title: 'B', radius: 120),
-    PieChartSectionData(value: 20, color: Colors.green, title: 'C', radius: 120),
-    PieChartSectionData(value: 10, color: Colors.orange, title: 'D', radius: 120),
-  ];
+  bool _isLoading = true;
 
-  //TEMPORARY these values are here for testing purposes
-  final List<FlSpot> placeHolderLineData = const [
-    FlSpot(0, 80000),
-    FlSpot(1, 95000),
-    FlSpot(2, 110000),
-    FlSpot(3, 105000),
-    FlSpot(4, 130000),
-    FlSpot(5, 145000),
-  ];
+  //Chart data
+  List<PieChartSectionData> _pieSections = [];
+  List<FlSpot> _lineSpots = [];
+  List<int> _lineYearLabels = [];
 
   void _openFilterModal() {
     String tempDataSet = currentDataSet;
@@ -112,6 +104,7 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
                         currentStyle = tempStyle;
                         currentMetric = tempMetric;
                       });
+                      _rebuildChartData();
                       Navigator.pop(context);
                     }
                   )
@@ -124,12 +117,12 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
     );
   }
 
-  String _metricLabel(String metric) {
-    switch(metric) {
+  String _yAxisLabel() {
+    switch(currentMetric) {
       case 'salary':      return 'Salary';
       case 'experience' : return 'Experience';
       case 'education' :  return 'Education';
-      default:            return metric;
+      default:            return currentMetric;
     }
   }
 
@@ -149,6 +142,80 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
   @override
   void initState() {
     super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async{
+    try {
+      await _presenter.fetchAIJobData();
+      _rebuildChartData();
+    } catch(e) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _rebuildChartData() {
+    final jobs = _presenter.AIJobs;
+    if(jobs == null || jobs.isEmpty) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    final pieSections = _presenter.buildPieSections(
+      jobs, 
+      _groupSelectorForMetric(currentMetric), 
+      _valueSelectorForMetric(currentMetric, jobs), 
+      colors: _getColorsForPie()
+      );
+    
+    final lineSpots = _presenter.buildTrendSpots(
+      jobs, 
+      _trendValueSelectorForMetric(currentMetric),
+    );
+
+    final yearLabels = _presenter.getSortedYears(jobs);
+
+    setState(() {
+      _pieSections = pieSections;
+      _lineSpots = lineSpots;
+      _lineYearLabels = yearLabels;
+      _isLoading = false;
+    });
+  }
+
+  //Metric to group pie chart
+  String Function(AIJob) _groupSelectorForMetric(String metric) {
+    switch (metric) {
+      case 'experience': return (j) => j.experienceLevel;
+      case 'education': return (j) => j.educationLevel;
+      default: return (j) => j.experienceLevel;
+    }
+  }
+
+  //Size of pie slice, will be increased if I add other metrics
+  double Function(List<AIJob>) _valueSelectorForMetric(
+    String metric, List<AIJob> jobs
+  ) {
+    switch (metric) {
+      case 'experience':
+      case 'education':
+      default:  
+          return (g) => g.length.toDouble();
+    }
+  }
+
+  //Y-axis for line chart
+  double Function(List<AIJob>) _trendValueSelectorForMetric(String metric) {
+    switch(metric) {
+      case 'salary':
+        return (g) => _presenter.getAverage(g, (j) => j.salary);
+      case 'total_jobs': return (g) => g.length.toDouble();
+      default: return (g) => _presenter.getAverage(g, (j) => j.salary);
+    }
   }
 
   @override
@@ -173,51 +240,63 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
             IconButton(
               icon: Icon(Icons.tune, color: colorScheme.onPrimary),
               tooltip: "Filters",
-              onPressed: _openFilterModal,
+              onPressed: _isLoading ? null : _openFilterModal,
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          child:Column(
-            children: [
-              const SizedBox(height: 16),
+        body: _buildBody(colorScheme),
+      ),
+    );
+  }
 
-              Padding(
-                padding: const EdgeInsetsGeometry.symmetric(horizontal: 16),
-                child: Wrap(
-                  spacing: 8,
-                  children: [
-                    _SummaryChip(label: currentDataSet == 'ai' ? 'AI' : 'Software Eng.'),
-                    _SummaryChip(label: currentStyle == 'distribution' ? 'Distribution' : 'Trends'),
-                    _SummaryChip(label: _metricLabel(currentMetric)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
+  Widget _buildBody(ColorScheme colorScheme) {
+    if(_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(color: colorScheme.primary),
+      );
+    }
 
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                transitionBuilder: (child, animation) =>
-                  FadeTransition(opacity: animation, child: child),
-                child: currentStyle == 'distribution'
-                    ? PieChartWidget(
-                      title: "Job Distribution by ${_metricLabel(currentMetric)}", 
-                      sections: placeHolderData,
-                )
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 16),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Wrap(
+              spacing: 8,
+              children: [
+                _SummaryChip(label: currentDataSet == 'ai' ? 'AI' : 'Software Engineering'),
+                _SummaryChip(label: currentStyle == 'distribution' ? 'Distribution' : 'Trends'),
+                _SummaryChip(label: _yAxisLabel()),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (child, animation) =>
+              FadeTransition(opacity: animation, child: child),
+            child: currentStyle == 'distribution'
+                ? PieChartWidget(
+                  title: "Job Distribution by $currentMetric", 
+                  sections: _pieSections,
+                 )
                 : SizedBox(
                   height: 300,
                   child: LineChartWidget(
-                    spots: placeHolderLineData, 
-                    lineColor: colorScheme.primary,
-                    yAxisLabel: _metricLabel(currentMetric), 
+                    spots: _lineSpots, 
+                    lineColor: colorScheme.primary, 
+                    yAxisLabel: _yAxisLabel(), 
                     xAxisLabel: 'Year', 
-                    bars: 1),
+                    bars: 1,
+                    yearLabels: _lineYearLabels,
+                    ),
                 ),
-              ),
-              const SizedBox(height: 32),
-           ],
           ),
-        ),
+          const SizedBox(height: 32),
+        ],
       ),
     );
   }

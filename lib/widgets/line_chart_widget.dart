@@ -7,6 +7,7 @@ class LineChartWidget extends StatelessWidget{
   final String yAxisLabel;
   final String xAxisLabel;
   final int bars;
+  final List<int> yearLabels;
 
   const LineChartWidget({
     super.key,
@@ -15,6 +16,7 @@ class LineChartWidget extends StatelessWidget{
     required this.yAxisLabel,
     required this.xAxisLabel,
     required this.bars,
+    required this.yearLabels,
   });
 
   @override
@@ -50,6 +52,23 @@ class LineChartWidget extends StatelessWidget{
               ),
               sideTitles: SideTitles(
                 showTitles: true,
+                reservedSize: 28,
+                getTitlesWidget: (value, meta) {
+                  final index = value.toInt();
+                  if (index < 0 || index >= yearLabels.length) {
+                    return const SizedBox.shrink();
+                  }
+                  return SideTitleWidget(
+                    meta: meta,
+                    child: Text(
+                      '${yearLabels[index]}',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                  );
+                }
               ),
             ),
             rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -58,10 +77,10 @@ class LineChartWidget extends StatelessWidget{
           borderData: FlBorderData(show: true),
 
           minX: 0,
-          maxX: spots.length.toDouble() - 1,
+          maxX: spots.isEmpty ? 1 : spots.length.toDouble() - 1,
 
           minY: 0,
-          maxY: 600000, //filler data, im not sure how i want to do this quite yet
+          maxY: spots.isEmpty ? 1 : spots.map((s) => s.y).reduce((a,b) => a > b ? a : b) * 1.2, //filler data, im not sure how i want to do this quite yet
 
           lineBarsData: [
             LineChartBarData(
