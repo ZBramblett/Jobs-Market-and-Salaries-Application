@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../presenter/auth_presenter.dart';
 import '../presenter/theme_presenter.dart';
@@ -14,7 +13,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _presenter = AuthPresenter();
+  final _presenter = AuthPresenter.authPresenter;
 
   String? _errorMessage;
 
@@ -226,7 +225,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
               const SizedBox(height: 8),
 
-              CustomButton(text: 'Login', width: 'span', onPressed: _handleLogin),
+              CustomButton(
+                text: 'Login',
+                width: 'span',
+                onPressed: _handleLogin,
+              ),
               const SizedBox(height: 24),
 
               Row(
@@ -234,7 +237,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Expanded(child: Divider()),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('or', style: TextStyle(color: scheme.onSurface.withAlpha(150))),
+                    child: Text(
+                      'or',
+                      style: TextStyle(color: scheme.onSurface.withAlpha(150)),
+                    ),
                   ),
                   const Expanded(child: Divider()),
                 ],
@@ -261,7 +267,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const Text("Don't have an account?"),
                   TextButton(
-                    onPressed: () => Navigator.pushReplacementNamed(context, '/signup'),
+                    onPressed: () =>
+                        Navigator.pushReplacementNamed(context, '/signup'),
                     child: const Text('Sign Up'),
                   ),
                 ],
