@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../model/salary_model.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -10,10 +11,52 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
 
+  List<SalaryEntry> _results = [];
+  bool _hasSearched = false;
+
+  Future<void> _searchJobs() async {
+    final query = _searchController.text.trim().toLowerCase();
+
+    if (query.isEmpty) {
+      setState(() {
+        _results = [];
+        _hasSearched = false;
+      });
+      return;
+    }
+
+    final model = SalaryModel();
+    final jobs = await model.loadEntries();
+
+    final filtered = jobs
+        .where((job) => job.jobTitle.toLowerCase().contains(query))
+        .toList();
+
+    setState(() {
+      _results = filtered;
+      _hasSearched = true;
+    });
+  }
+
+  String _formatSalary(SalaryEntry job) {
+    if (job.salaryMin != null && job.salaryMax != null) {
+      return '\$${job.salaryMin} - \$${job.salaryMax}';
+    }
+    return 'Salary N/A';
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Job Search')),
+      appBar: AppBar(
+        title: const Text('Software Engineer Job Search'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -22,15 +65,36 @@ class _SearchPageState extends State<SearchPage> {
               controller: _searchController,
               decoration: const InputDecoration(
                 labelText: 'Enter job title',
+                hintText: 'Example: Software Engineer',
                 border: OutlineInputBorder(),
               ),
+              onSubmitted: (_) => _searchJobs(),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             ElevatedButton(
-              onPressed: () {
-                // we will add search logic here next
-              },
+              onPressed: _searchJobs,
               child: const Text('Search'),
+            ),
+            const SizedBox(height: 16),
+            if (_hasSearched && _results.isEmpty)
+              const Text('No jobs found. Try a different job title.'),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _results.length,
+                itemBuilder: (context, index) {
+                  final job = _results[index];
+
+                  return Card(
+                    child: ListTile(
+                      title: Text(job.jobTitle),
+                      subtitle: Text(
+                        '${job.company}\n${job.location}',
+                      ),
+                      trailing: Text(_formatSalary(job)),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
