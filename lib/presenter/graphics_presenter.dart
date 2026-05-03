@@ -2,10 +2,12 @@ import 'package:finalexam_salaries/model/ai_career_search_model.dart';
 import '../model/graphics_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:finalexam_salaries/model/salary_model.dart';
 
 class GraphicsPresenter {
   GraphicsModel model = GraphicsModel();
   List<AIJob>? AIJobs;
+  List<SalaryEntry>? seJobs;
 
   GraphicsPresenter();
 
@@ -82,7 +84,7 @@ class GraphicsPresenter {
         titleStyle: const TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.bold,
-          color: Colors.white
+          color: Colors.black
         )
       );
     }).toList();
@@ -92,4 +94,79 @@ class GraphicsPresenter {
   List<int> getSortedYears(List<AIJob> jobs) {
     return groupByYear(jobs).keys.toList();
   }
+
+  //Fetch software jobs
+  Future<void> fetchSEJobData() async {
+    seJobs ??= await SalaryModel().loadEntries();
+  }
+
+  //Bucket salary into ranges (for graph purposes)
+  String getSalaryBucket(SalaryEntry job) {
+    final mid = job.salaryMid;
+    if (mid == null) return 'Unknown';
+    if (mid < 50000) return 'Under \$50k';
+    if (mid < 100000) return '\$50k-\$100k';
+    if (mid < 150000) return '\$100k-\$150k';
+    return 'Over \$150k';
+  }
+
+  //Group se jobs by metric, similar to ai jobs
+  Map<String, List<SalaryEntry>> groupSEByMetric(
+    List<SalaryEntry> jobs,
+    String Function(SalaryEntry) selector,
+  ) {
+    final Map<String, List<SalaryEntry>> grouped = {};
+    for (final job in jobs) {
+      grouped.putIfAbsent(selector(job), () => []).add(job);
+    }
+    return grouped;
+  }
+
+  List<PieChartSectionData> buildPieSectionsSE(
+    List<SalaryEntry> jobs,
+    String Function(SalaryEntry) groupSelector, {
+      required List<Color> colors,
+      double radius = 120,
+      int topN = 8, //stops pie chart from having too many sections
+    }) {
+      final grouped = groupSEByMetric(jobs, groupSelector);
+
+      final sorted = grouped.entries.toList()..sort((a,b) => b.value.length.compareTo(a.value.length));
+      final topEntries = sorted.take(topN).toList();
+      final otherCount = sorted.skip(topN).fold(0, (sum,e) => sum + e.value.length);
+
+      final total = jobs.length.toDouble();
+      int i = 0;
+
+      final sections = topEntries.map((entry) {
+        final percent = (entry.value.length / total) * 100;
+        return PieChartSectionData(
+          value: percent,
+          color: colors[i++ % colors.length],
+          title: '${entry.key}\n${percent.toStringAsFixed(1)}%',
+          radius: radius,
+          titleStyle: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        );
+      }).toList();
+
+      if (otherCount > 0) {
+        final otherPercent = (otherCount / total) * 100;
+        sections.add(PieChartSectionData(
+          value: otherPercent,
+          color: Colors.grey,
+          title: 'Other\n${otherPercent.toStringAsFixed(1)}%',
+          radius: radius,
+          titleStyle: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ));
+      }
+      return sections;
+    }
 }
