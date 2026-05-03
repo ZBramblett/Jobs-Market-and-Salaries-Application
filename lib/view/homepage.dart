@@ -1,5 +1,6 @@
 import 'package:finalexam_salaries/view/graphics_page.dart';
 import 'package:finalexam_salaries/widgets/interview_calendar.dart';
+import 'package:finalexam_salaries/widgets/saved_jobs_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:finalexam_salaries/model/save_jobs.dart';
 import 'package:finalexam_salaries/view/UI_functions.dart';
@@ -49,7 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 10),
             const InterviewCalendarWidget(),
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
+            const SavedJobsList(),
           ],
         ),
       ),
