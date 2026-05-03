@@ -54,9 +54,15 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
 
   String _yAxisLabel() {
     switch(currentMetric) {
-      case 'salary':      return 'Salary';
+      case 'salary':      return 'Avg. Salary';
       case 'experience' : return 'Experience';
       case 'education' :  return 'Education';
+      case 'aiRiskCategory': return 'AI Risk Category';
+      case 'primarySkill': return 'Primary Skill';
+      case 'country' : return 'Country';
+      case 'aiRiskScore': return 'Avg. Ai Risk Score';
+      case 'skillDemand': return 'Avg. Skill Demand';
+      case 'jobOpenings': return 'Avg. Job Openings';
       default:            return currentMetric;
     }
   }
@@ -127,6 +133,9 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
     switch (metric) {
       case 'experience': return (j) => j.experienceLevel;
       case 'education': return (j) => j.educationLevel;
+      case 'aiRiskCategory': return (j) => j.aiRiskCategory;
+      case 'primarySkill': return (j) => j.primarySkill;
+      case 'country': return (j) => j.country;
       default: return (j) => j.experienceLevel;
     }
   }
@@ -138,6 +147,9 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
     switch (metric) {
       case 'experience':
       case 'education':
+      case 'aiRiskCategory':
+      case 'primarySkill':
+      case 'country':
       default:  
           return (g) => g.length.toDouble();
     }
@@ -146,9 +158,10 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
   //Y-axis for line chart
   double Function(List<AIJob>) _trendValueSelectorForMetric(String metric) {
     switch(metric) {
-      case 'salary':
-        return (g) => _presenter.getAverage(g, (j) => j.salary);
-      case 'total_jobs': return (g) => g.length.toDouble();
+      case 'salary': return (g) => _presenter.getAverage(g, (j) => j.salary);
+      case 'aiRiskScore': return (g) => _presenter.getAverage(g, (j) => j.aiRiskScore);
+      case 'skillDemand': return (g) => _presenter.getAverage(g, (j) => j.skillDemandScore.toDouble());
+      case 'jobOpenings': return (g) => _presenter.getAverage(g, (j) => j.jobOpenings.toDouble());
       default: return (g) => _presenter.getAverage(g, (j) => j.salary);
     }
   }
@@ -333,16 +346,29 @@ class _FilterSheetState extends State<_FilterSheet> {
       late String tempStyle;
       late String tempMetric;
 
+      static const _distributionOnlyMetrics = {
+        'aiRiskCategory', 'primarySkill', 'country', 'experience', 'education'
+      };
+
+      static const _trendsOnlyMetrics = {
+        'salary', 'aiRiskScore', 'skillDemand', 'jobOpenings'
+      };
+
       @override
-  void initState() {
-    super.initState();
-    tempDataSet = widget.initialDataSet;
-    tempStyle = widget.initialStyle;
-    tempMetric = widget.initialMetric;
-  }
+    void initState() {
+      super.initState();
+      tempDataSet = widget.initialDataSet;
+      tempStyle = widget.initialStyle;
+      tempMetric = widget.initialMetric;
+    }
 
   @override
   Widget build(BuildContext context) {
+
+    final Set<String> disabledMetrics = tempStyle == 'distribution'
+      ? _trendsOnlyMetrics
+      : _distributionOnlyMetrics;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
       child: Column(
@@ -372,7 +398,17 @@ class _FilterSheetState extends State<_FilterSheet> {
                   'ai' : 'AI Careers', 
                   'se': 'Software Engineering Careers'}, 
                 selected: tempDataSet, 
-                onChanged: (v) => setState(() => tempDataSet = v),
+                onChanged: (v) => setState(() {
+                  tempDataSet = v;
+
+                  if(v == 'se') {
+                    tempStyle = 'distribution';
+                    tempMetric = 'location';
+                  } else {
+                    tempStyle = 'distribution';
+                    tempMetric = 'experience';
+                  }
+                }),
               ),
               const SizedBox(height: 20),
               _SheetSection(
@@ -381,18 +417,34 @@ class _FilterSheetState extends State<_FilterSheet> {
                   'distribution' : 'Job Distribution', 
                   'trends': 'Trends Over Time'}, 
                 selected: tempStyle, 
-                onChanged: (v) => setState(() => tempStyle = v),
+                onChanged: (v) => setState(() {
+                  tempStyle = v;
+                  tempMetric = v == 'distribution' ? 'experience' : 'salary';
+                }),
+                disabledOptions: tempDataSet == 'se' ? const{'trends'} : const {},
               ),
               const SizedBox(height: 20),
                 _SheetSection(
                   label: "Metric", 
-                  options: const {
-                    'salary' : 'Salary', 
-                    'experience': 'Experience Level',
-                    'education' : 'Education Level'}, 
+                  options: tempDataSet == 'se'
+                    ? const {
+                      'location': 'Location',
+                      'salaryRange': 'Salary Range',
+                    }
+                    : const {
+                      'experience': 'Experience Level',
+                      'education': 'Education Level',
+                      'aiRiskCategory': 'AI Risk Category',
+                      'primarySkill': 'Primary Skill',
+                      'country': 'Country',
+                      'salary': 'Avg. Salary',
+                      'aiRiskScore': 'AI Risk Score',
+                      'skillDemand': 'Skill Demand',
+                      'jobOpenings': 'Job Openings',
+                    } ,
                   selected: tempMetric, 
                   onChanged: (v) => setState(() => tempMetric = v),
-                  disabledOptions: tempStyle == 'distribution' ? const {'salary'} : const {},
+                  disabledOptions: tempDataSet == 'se' ? const {} : disabledMetrics,
                 ),
                 const SizedBox(height: 32),
 
