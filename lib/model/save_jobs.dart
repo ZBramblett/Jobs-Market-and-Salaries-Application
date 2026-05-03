@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
+
 import 'ai_career_search_model.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class SaveJobs {
+class SaveJobs extends ChangeNotifier{
   SaveJobs._();
 
   static final SaveJobs instance = SaveJobs._();
@@ -23,7 +25,10 @@ class SaveJobs {
   );
 
   void save(AIJob job) {
-    if(!isSaved(job)) _savedJobsAI.add(job);
+    if(!isSaved(job)){
+      _savedJobsAI.add(job);
+      notifyListeners();
+    } 
   }
 
   void unsave(AIJob job) {
@@ -35,6 +40,7 @@ class SaveJobs {
       j.year == job.year &&
       j.salary == job.salary
     );
+    notifyListeners();
   }
 
   void toggle(AIJob job) {
