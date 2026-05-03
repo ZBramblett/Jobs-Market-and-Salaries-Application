@@ -4,14 +4,13 @@ import '../model/auth_model.dart';
 class AuthPresenter {
   final AuthModel _model = AuthModel();
 
+  static AuthPresenter get authPresenter => AuthPresenter();
+
   Future<String?> login(String email, String password) {
     return _model.login(email, password);
   }
 
-  Future<String?> signUp(
-    String email,
-    String password,
-  ) {
+  Future<String?> signUp(String email, String password) {
     return _model.signUp(email, password);
   }
 

@@ -14,7 +14,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _presenter = AuthPresenter();
+  final _presenter = AuthPresenter.authPresenter;
 
   String? _errorMessage;
 
@@ -90,7 +90,10 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(height: 12),
               TextField(
                 controller: _confirmPasswordController,
-                decoration: fieldDecoration('Confirm Password', Icons.lock_outline),
+                decoration: fieldDecoration(
+                  'Confirm Password',
+                  Icons.lock_outline,
+                ),
                 obscureText: true,
               ),
 
@@ -104,7 +107,11 @@ class _SignupScreenState extends State<SignupScreen> {
               ],
               const SizedBox(height: 24),
 
-              CustomButton(text: 'Sign Up', width: 'span', onPressed: _handleSignUp),
+              CustomButton(
+                text: 'Sign Up',
+                width: 'span',
+                onPressed: _handleSignUp,
+              ),
               const SizedBox(height: 16),
 
               Row(
@@ -112,7 +119,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: [
                   const Text('Already have an account?'),
                   TextButton(
-                    onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
+                    onPressed: () =>
+                        Navigator.pushReplacementNamed(context, '/login'),
                     child: const Text('Login'),
                   ),
                 ],

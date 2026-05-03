@@ -35,8 +35,18 @@ class MyApp extends StatelessWidget {
               seedColor: const Color.fromARGB(255, 35, 82, 45),
               brightness: Brightness.light,
             ),
+            navigationBarTheme: const NavigationBarThemeData(
+              labelTextStyle: WidgetStatePropertyAll(
+                TextStyle(fontSize: 10, overflow: TextOverflow.ellipsis),
+              ),
+            ),
           ),
           darkTheme: ThemeData(
+            navigationBarTheme: const NavigationBarThemeData(
+              labelTextStyle: WidgetStatePropertyAll(
+                TextStyle(fontSize: 10, overflow: TextOverflow.ellipsis),
+              ),
+            ),
             colorScheme: ColorScheme(
               primary: Color.fromARGB(255, 175, 255, 175),
               secondary: Color.fromARGB(255, 100, 255, 100),
@@ -84,7 +94,7 @@ class _MainScreenState extends State<MainScreen> {
       },
     ),
     const CityComparerScreen(),
-    const SettingsPage(),
+    SettingsPage(),
   ];
 
   @override

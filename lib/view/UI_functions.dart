@@ -123,12 +123,14 @@ class CustomCard extends StatefulWidget {
   final String title;
   final String description;
   final VoidCallback? onPressed;
+  final String buttonText;
 
   const CustomCard({
     super.key,
     required this.title,
     required this.description,
     this.onPressed,
+    this.buttonText = 'Action',
   });
 
   @override
@@ -196,16 +198,9 @@ class _CustomCardState extends State<CustomCard> {
                 ),
                 if (widget.onPressed != null) ...[
                   const SizedBox(width: 8),
-                  ElevatedButton(
+                  CustomButton(
+                    text: widget.buttonText,
                     onPressed: widget.onPressed,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: scheme.primary,
-                      foregroundColor: scheme.onPrimary,
-                      shape: RoundedRectangleBorder(borderRadius: radius),
-                      minimumSize: const Size(40, 40),
-                      padding: EdgeInsets.zero,
-                    ),
-                    child: const Icon(Icons.play_arrow),
                   ),
                 ],
               ],
