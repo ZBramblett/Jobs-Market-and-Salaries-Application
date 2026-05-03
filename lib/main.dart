@@ -6,6 +6,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:finalexam_salaries/view/homepage.dart';
 import 'package:finalexam_salaries/view/searchpage.dart';
 import 'package:finalexam_salaries/view/settingspage.dart';
+import 'package:finalexam_salaries/view/music_view.dart';
+import 'package:finalexam_salaries/view/video_view.dart';
 import 'package:finalexam_salaries/view/AICareerPage.dart';
 import 'package:finalexam_salaries/view/city_comparer_screen.dart';
 
@@ -16,6 +18,7 @@ void main() async {
 }
 
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
+final ValueNotifier<bool> fullScreenNotifier = ValueNotifier(false);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -24,7 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
-      builder: (_, ThemeMode currentMode, __) {
+      builder: (_, ThemeMode currentMode, _) {
         return MaterialApp(
           title: 'Flutter Demo',
           theme: ThemeData(
@@ -74,79 +77,108 @@ class _MainScreenState extends State<MainScreen> {
     const AICareerPage(),
     const RiskAnalysisPage(),
     const SearchPage(),
+    const MusicView(),
+    VideoView(
+      onFullScreenChanged: (isFullScreen) {
+        fullScreenNotifier.value = isFullScreen;
+      },
+    ),
     const CityComparerScreen(),
     const SettingsPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: _pages),
-      bottomNavigationBar: NavigationBar(
-        surfaceTintColor: Theme.of(context).colorScheme.primary,
-        indicatorColor: WidgetStateColor.resolveWith((states) {
-          final colorScheme = Theme.of(context).colorScheme;
-          return colorScheme.brightness == Brightness.dark
-              ? colorScheme.primary
-              : colorScheme.primary;
-        }),
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        destinations: [
-          NavigationDestination(
-            icon: Icon(Icons.home),
-            label: 'Home',
-            selectedIcon: Icon(
-              Icons.home,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_search),
-            label: 'AI Careers',
-            selectedIcon: Icon(
-              Icons.person_search,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-            NavigationDestination(
-            icon: Icon(Icons.person_search),
-            label: 'Risk Analysis',
-            selectedIcon: Icon(
-              Icons.person_search_outlined,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.search),
-            label: 'Search',
-            selectedIcon: Icon(
-              Icons.search,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.compare_arrows),
-            label: 'Compare',
-            selectedIcon: Icon(
-              Icons.compare_arrows,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-            selectedIcon: Icon(
-              Icons.settings,
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-          ),
-        ],
-      ),
+    return ValueListenableBuilder<bool>(
+      valueListenable: fullScreenNotifier,
+      builder: (_, isFullScreen, _) {
+        return Scaffold(
+          body: IndexedStack(index: _selectedIndex, children: _pages),
+          bottomNavigationBar: isFullScreen
+              ? null
+              : NavigationBar(
+                  surfaceTintColor: Theme.of(context).colorScheme.primary,
+                  indicatorColor: WidgetStateColor.resolveWith((states) {
+                    final colorScheme = Theme.of(context).colorScheme;
+                    return colorScheme.brightness == Brightness.dark
+                        ? colorScheme.primary
+                        : colorScheme.primary;
+                  }),
+                  selectedIndex: _selectedIndex,
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+                  },
+                  destinations: [
+                    NavigationDestination(
+                      icon: Icon(Icons.home),
+                      label: 'Home',
+                      selectedIcon: Icon(
+                        Icons.home,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.person_search),
+                      label: 'AI Careers',
+                      selectedIcon: Icon(
+                        Icons.person_search,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.person_search),
+                      label: 'Risk Analysis',
+                      selectedIcon: Icon(
+                        Icons.person_search_outlined,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.search),
+                      label: 'Search',
+                      selectedIcon: Icon(
+                        Icons.search,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.music_note),
+                      label: 'Music',
+                      selectedIcon: Icon(
+                        Icons.music_note,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.video_library),
+                      label: 'Videos',
+                      selectedIcon: Icon(
+                        Icons.video_library,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.compare_arrows),
+                      label: 'Compare',
+                      selectedIcon: Icon(
+                        Icons.compare_arrows,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.settings),
+                      label: 'Settings',
+                      selectedIcon: Icon(
+                        Icons.settings,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+        );
+      },
     );
   }
 }
