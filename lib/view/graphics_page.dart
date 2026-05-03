@@ -29,9 +29,6 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
   List<int> _lineYearLabels = [];
 
   void _openFilterModal() {
-    String tempDataSet = currentDataSet;
-    String tempStyle = currentStyle;
-    String tempMetric = currentMetric;
 
     showModalBottomSheet(
       context: context, 
@@ -39,81 +36,19 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setSheetState) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade400,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    "Filters",
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 24),
-
-                  _SheetSection(
-                    label: "Dataset", 
-                    options: const {
-                      'ai' : 'AI Careers', 
-                      'se': 'Software Engineering Careers'}, 
-                    selected: tempDataSet, 
-                    onChanged: (v) => setSheetState(() => tempDataSet = v),
-                  ),
-                  const SizedBox(height: 20),
-                  _SheetSection(
-                    label: "Analytic", 
-                    options: const {
-                      'distribution' : 'Job Distribution', 
-                      'trends': 'Trends Over Time'}, 
-                    selected: tempStyle, 
-                    onChanged: (v) => setSheetState(() => tempStyle = v),
-                  ),
-                  const SizedBox(height: 20),
-                    _SheetSection(
-                      label: "Metric", 
-                      options: const {
-                        'salary' : 'Salary', 
-                        'experience': 'Experience Level',
-                        'education' : 'Education Level'}, 
-                      selected: tempMetric, 
-                      onChanged: (v) => setSheetState(() => tempMetric = v),
-                  ),
-                  const SizedBox(height: 32),
-
-                  CustomButton(
-                    text: "Apply",
-                    style: 'primary',
-                    width: 'span', 
-                    onPressed: () {
-                      setState(() {
-                        currentDataSet = tempDataSet;
-                        currentStyle = tempStyle;
-                        currentMetric = tempMetric;
-                      });
-                      _rebuildChartData();
-                      Navigator.pop(context);
-                    }
-                  )
-                ],
-              ),
-            );
-          },
-        );
-      },
+      builder: (context) => _FilterSheet(
+        initialDataSet: currentDataSet, 
+        initialStyle: currentStyle, 
+        initialMetric: currentMetric, 
+        onApply: (dataSet, style, metric) {
+          setState(() {
+            currentDataSet = dataSet;
+            currentStyle = style;
+            currentMetric = metric;
+          });
+          _rebuildChartData();
+        }
+      )
     );
   }
 
@@ -307,12 +242,14 @@ class _SheetSection extends StatelessWidget {
   final Map<String, String> options;
   final String selected;
   final ValueChanged<String> onChanged;
+  final Set<String> disabledOptions;
 
   const _SheetSection({
     required this.label,
     required this.options,
     required this.selected,
     required this.onChanged,
+    this.disabledOptions = const {},
   });
 
   @override
@@ -336,11 +273,15 @@ class _SheetSection extends StatelessWidget {
           runSpacing: 0,
           children: options.entries.map((entry) {
               final bool active = entry.key == selected;
-              return CustomButton(
-                text: entry.value, 
-                style: active ? 'primary' : 'secondary',
-                width: 'fit',
-                onPressed: () => onChanged(entry.key),
+              final bool disabled = disabledOptions.contains(entry.key);
+              return Opacity(
+                opacity: disabled ? 0.35 : 1.0,
+                child: CustomButton(
+                  text: entry.value,
+                  style: active ? 'primary' : 'secondary',
+                  width: 'fit', 
+                  onPressed: disabled ? null : () => onChanged(entry.key),
+                  ),
             );
           }).toList(),
         )
@@ -368,4 +309,105 @@ class _SummaryChip extends StatelessWidget {
       visualDensity: VisualDensity.compact,
     );
   }
+}
+
+class _FilterSheet extends StatefulWidget {
+  final String initialDataSet;
+  final String initialStyle;
+  final String initialMetric;
+  final void Function(String dataSet, String style, String metric) onApply;
+
+  const _FilterSheet({
+    required this.initialDataSet,
+    required this.initialStyle,
+    required this.initialMetric,
+    required this.onApply,
+  });
+
+  @override
+  State<_FilterSheet> createState() => _FilterSheetState();
+}
+
+class _FilterSheetState extends State<_FilterSheet> {
+      late String tempDataSet;
+      late String tempStyle;
+      late String tempMetric;
+
+      @override
+  void initState() {
+    super.initState();
+    tempDataSet = widget.initialDataSet;
+    tempStyle = widget.initialStyle;
+    tempMetric = widget.initialMetric;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+      child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+              color: Colors.grey.shade400,
+              borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "Filters",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 24),
+
+              _SheetSection(
+                label: "Dataset", 
+                options: const {
+                  'ai' : 'AI Careers', 
+                  'se': 'Software Engineering Careers'}, 
+                selected: tempDataSet, 
+                onChanged: (v) => setState(() => tempDataSet = v),
+              ),
+              const SizedBox(height: 20),
+              _SheetSection(
+                label: "Analytic", 
+                options: const {
+                  'distribution' : 'Job Distribution', 
+                  'trends': 'Trends Over Time'}, 
+                selected: tempStyle, 
+                onChanged: (v) => setState(() => tempStyle = v),
+              ),
+              const SizedBox(height: 20),
+                _SheetSection(
+                  label: "Metric", 
+                  options: const {
+                    'salary' : 'Salary', 
+                    'experience': 'Experience Level',
+                    'education' : 'Education Level'}, 
+                  selected: tempMetric, 
+                  onChanged: (v) => setState(() => tempMetric = v),
+                  disabledOptions: tempStyle == 'distribution' ? const {'salary'} : const {},
+                ),
+                const SizedBox(height: 32),
+
+                CustomButton(
+                  text: "Apply",
+                  style: 'primary',
+                  width: 'span', 
+                  onPressed: () {
+                    widget.onApply(tempDataSet,tempStyle, tempMetric);
+                    Navigator.pop(context);
+                    }
+                  )
+                ],
+              ),
+            );
+  }
+
 }
