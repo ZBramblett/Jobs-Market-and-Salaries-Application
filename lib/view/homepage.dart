@@ -3,8 +3,8 @@ import 'package:finalexam_salaries/widgets/interview_calendar.dart';
 import 'package:finalexam_salaries/widgets/saved_jobs_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:finalexam_salaries/model/save_jobs.dart';
-import 'package:finalexam_salaries/view/UI_functions.dart';
-import '../presenter/auth_presenter.dart';
+// import 'package:finalexam_salaries/view/UI_functions.dart';
+// import '../presenter/auth_presenter.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
