@@ -131,6 +131,8 @@ class GraphicsPresenter {
     }) {
       final grouped = groupSEByMetric(jobs, groupSelector);
 
+      grouped.removeWhere((key, _) => key =='Unknown');
+
       final sorted = grouped.entries.toList()..sort((a,b) => b.value.length.compareTo(a.value.length));
       final topEntries = sorted.take(topN).toList();
       final otherCount = sorted.skip(topN).fold(0, (sum,e) => sum + e.value.length);

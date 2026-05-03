@@ -236,6 +236,23 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Current Filters",
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.4,
+                  color: colorScheme.onSurface.withValues(alpha: 0.55),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Wrap(
               spacing: 8,
               children: [
@@ -245,9 +262,10 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 100),
 
-          AnimatedSwitcher(
+          Center(
+            child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             transitionBuilder: (child, animation) =>
               FadeTransition(opacity: animation, child: child),
@@ -267,6 +285,7 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
                     yearLabels: _lineYearLabels,
                     ),
                 ),
+          ),
           ),
           const SizedBox(height: 32),
         ],
