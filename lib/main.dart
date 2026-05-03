@@ -1,3 +1,5 @@
+import 'package:finalexam_salaries/model/ai_job_data.dart';
+import 'package:finalexam_salaries/model/save_jobs.dart';
 import 'package:finalexam_salaries/view/riskAnalysisPage.dart';
 import 'package:finalexam_salaries/view/login_screen.dart';
 import 'package:finalexam_salaries/view/signup_screen.dart';
@@ -14,6 +16,8 @@ import 'package:finalexam_salaries/view/city_comparer_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final allJobs = await AIJobData.instance.loadJobs();
+  await SaveJobs.instance.loadSavedJobs(allJobs);
   runApp(const MyApp());
 }
 
