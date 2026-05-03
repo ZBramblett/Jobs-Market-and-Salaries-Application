@@ -8,7 +8,6 @@ import 'package:finalexam_salaries/view/searchpage.dart';
 import 'package:finalexam_salaries/view/settingspage.dart';
 import 'package:finalexam_salaries/view/AICareerPage.dart';
 import 'package:finalexam_salaries/view/city_comparer_screen.dart';
-import 'package:finalexam_salaries/view/graphics_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -77,7 +76,6 @@ class _MainScreenState extends State<MainScreen> {
     const SearchPage(),
     const CityComparerScreen(),
     const SettingsPage(),
-    const GraphicsPageScreen(),
   ];
 
   @override
