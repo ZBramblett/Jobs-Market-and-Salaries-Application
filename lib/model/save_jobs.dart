@@ -32,4 +32,8 @@ class SaveJobs {
       j.salary == job.salary
     );
   }
+
+  void toggle(AIJob job) {
+    isSaved(job) ? unsave(job) : save(job);
+  }
 }
