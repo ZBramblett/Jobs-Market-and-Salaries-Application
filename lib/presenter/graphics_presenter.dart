@@ -1,6 +1,7 @@
 import 'package:finalexam_salaries/model/ai_career_search_model.dart';
 import '../model/graphics_model.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 
 class GraphicsPresenter {
   GraphicsModel model = GraphicsModel();
@@ -26,5 +27,64 @@ class GraphicsPresenter {
     );
   }
 
+  //Group Jobs by other selectors, better for pie chart
+  Map<String, List<AIJob>> groupByMetric(
+    List<AIJob> jobs,
+    String Function(AIJob) selector,
+  ) {
+    final Map<String, List<AIJob>> groupedJobs = {};
+    for (final job in jobs) {
+      groupedJobs.putIfAbsent(selector(job), () => []).add(job);
+    }
+    return groupedJobs;
+  }
 
+  //Getting averages, for trend graphs
+  double getAverage(List<AIJob> jobs, double Function(AIJob) selector) {
+    if (jobs.isEmpty) return 0;
+    return jobs.map(selector).reduce((a,b) => a + b) / jobs.length;
+  }
+
+  //Building spots for line chart
+  List<FlSpot> buildTrendSpots(
+    List<AIJob> jobs,
+    double Function(List<AIJob>) valueSelector,
+  ) {
+    final groupedJobs = groupByYear(jobs);
+    double xIndex = 0;
+    return groupedJobs.entries.map((entry) {
+      return FlSpot(xIndex++, valueSelector(entry.value));
+    }).toList();
+  }
+
+  //Build Sections for the pie chart
+  List<PieChartSectionData> buildPieSections(
+    List<AIJob> jobs,
+    String Function(AIJob) groupSelector,
+    double Function(List<AIJob>) valueSelector, {
+      required List<Color> colors,
+      double radius = 120,
+    }
+  ) {
+    final groupedJobs = groupByMetric(jobs, groupSelector);
+    final values = groupedJobs.map(
+      (key, group) => MapEntry(key, valueSelector(group)),
+    );
+    final total = values.values.reduce((a,b) => a + b);
+    int i = 0;
+    return values.entries.map((entry) {
+      final percent = (entry.value / total) * 100;
+      return PieChartSectionData(
+        value: percent,
+        color: colors[i++ % colors.length],
+        title: '${entry.key}\n${percent.toStringAsFixed(1)}%',
+        radius: radius,
+        titleStyle: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: Colors.white
+        )
+      );
+    }).toList();
+  }
 }
