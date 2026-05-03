@@ -14,12 +14,26 @@ class _InterviewCalendarWidgetState extends State<InterviewCalendarWidget> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
+  void _onServiceChanged() => setState(() { });
+
   List<DateTime> get _interviewDates => SaveJobs.instance.interviewDates;
 
   List<DateTime> _getInterviewsByDay(DateTime day) {
     return _interviewDates
         .where((d) => isSameDay(d, day))
         .toList();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    SaveJobs.instance.addListener(_onServiceChanged);
+  }
+
+  @override
+  void dispose() {
+    SaveJobs.instance.removeListener(_onServiceChanged);
+    super.dispose();
   }
 
   @override
@@ -50,7 +64,7 @@ class _InterviewCalendarWidgetState extends State<InterviewCalendarWidget> {
           if(hasInterview) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text("You have an interview of ${selectedDay.month}/${selectedDay.day}/${selectedDay.year}"), //this will probably change on final polish
+                content: Text("You have an interview on ${selectedDay.month}/${selectedDay.day}/${selectedDay.year}"), //this will probably change on final polish
                 duration: const Duration(seconds: 2),
               ),
             );
