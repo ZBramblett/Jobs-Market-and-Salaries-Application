@@ -78,7 +78,7 @@ class _SavedJobsListState extends State<SavedJobsList> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
           child: Text(
-            "AI Careers",
+            "Saved AI Careers",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -288,16 +288,16 @@ class _AIJobDetailSheet extends StatelessWidget {
           const SizedBox(height: 12),
 
           _DetailRow(label: 'Salary', value: '\$${job.salary.toStringAsFixed(0)}', colorScheme: colorScheme),
-          _DetailRow(label: 'Experience Level', value: '\$${job.experienceLevel}', colorScheme: colorScheme),
-          _DetailRow(label: 'Education Level', value: '\$${job.educationLevel}', colorScheme: colorScheme),
-          _DetailRow(label: 'Primary Skill', value: '\$${job.primarySkill}', colorScheme: colorScheme),
-          _DetailRow(label: 'Salary Bucket', value: '\$${job.salaryBucket}', colorScheme: colorScheme),
-          _DetailRow(label: 'AI Risk Score', value: '\$${job.aiRiskScore.toString()}', colorScheme: colorScheme),
-          _DetailRow(label: 'AI Risk Category', value: '\$${job.aiRiskCategory}', colorScheme: colorScheme),
-          _DetailRow(label: 'Skill Demand Score', value: '\$${job.skillDemandScore.toString()}', colorScheme: colorScheme),
-          _DetailRow(label: 'Job Openings', value: '\$${job.jobOpenings.toString()}', colorScheme: colorScheme),
-          _DetailRow(label: 'Survival Class', value: '\$${job.jobSurvivalClass.toString()}', colorScheme: colorScheme),
-          _DetailRow(label: 'Year', value: '\$${job.year.toString()}', colorScheme: colorScheme),
+          _DetailRow(label: 'Experience Level', value: job.experienceLevel, colorScheme: colorScheme),
+          _DetailRow(label: 'Education Level', value: job.educationLevel, colorScheme: colorScheme),
+          _DetailRow(label: 'Primary Skill', value: job.primarySkill, colorScheme: colorScheme),
+          _DetailRow(label: 'Salary Bucket', value: job.salaryBucket, colorScheme: colorScheme),
+          _DetailRow(label: 'AI Risk Score', value: job.aiRiskScore.toString(), colorScheme: colorScheme),
+          _DetailRow(label: 'AI Risk Category', value: job.aiRiskCategory, colorScheme: colorScheme),
+          _DetailRow(label: 'Skill Demand Score', value: job.skillDemandScore.toString(), colorScheme: colorScheme),
+          _DetailRow(label: 'Job Openings', value: job.jobOpenings.toString(), colorScheme: colorScheme),
+          _DetailRow(label: 'Survival Class', value: job.jobSurvivalClass.toString(), colorScheme: colorScheme),
+          _DetailRow(label: 'Year', value: job.year.toString(), colorScheme: colorScheme),
         ],
       ),
     );
