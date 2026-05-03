@@ -54,6 +54,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   fl_chart: ^1.2.0
+  table_calendar: ^3.2.0
+  shared_preferences: ^2.5.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

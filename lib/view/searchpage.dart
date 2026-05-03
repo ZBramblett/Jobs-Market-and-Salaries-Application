@@ -1,3 +1,4 @@
+import 'package:finalexam_salaries/model/save_jobs.dart';
 import 'package:flutter/material.dart';
 import '../model/salary_model.dart';
 
@@ -83,15 +84,37 @@ class _SearchPageState extends State<SearchPage> {
                 itemCount: _results.length,
                 itemBuilder: (context, index) {
                   final job = _results[index];
-
-                  return Card(
-                    child: ListTile(
-                      title: Text(job.jobTitle),
-                      subtitle: Text(
-                        '${job.company}\n${job.location}',
-                      ),
-                      trailing: Text(_formatSalary(job)),
-                    ),
+                  return Stack(
+                    children: [
+                      Card(
+                        child: ListTile(
+                            title: Text(job.jobTitle),
+                            subtitle: Text(
+                              '${job.company}\n${job.location}',
+                            ),
+                          trailing: Text(_formatSalary(job)),
+                          ),
+                        ),
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: StatefulBuilder(
+                          builder: (context, setButtonState) {
+                            final saved = SaveJobs.instance.isSavedSE(job);
+                            return IconButton(
+                              onPressed: () {
+                                SaveJobs.instance.toggleSESave(job);
+                                setButtonState(() {});
+                              }, 
+                              icon: Icon(
+                                saved ? Icons.bookmark : Icons.bookmark_border,
+                                color: Theme.of(context).colorScheme.primary,
+                              )
+                            );
+                          }
+                        ),
+                      )
+                    ],
                   );
                 },
               ),

@@ -146,9 +146,32 @@ class _AICareerPageState extends State<AICareerPage> {
             'Education: ${job.educationLevel}\n'
             'Salary: ${_formatSalary(job.salary)}\n'
             'Country: ${job.country}';
-        return CustomCard(
-          title: job.jobTitle,
-          description: description,
+        return Stack(
+          children: [
+            CustomCard(
+              title: job.jobTitle,
+              description: description,
+            ),
+            Positioned(
+              top: 12,
+              right: 12,
+              child: StatefulBuilder(
+                builder: (context, setButtonState) {
+                  final saved = _presenter.isSaved(job);
+                  return IconButton(
+                    icon: Icon(
+                      saved ? Icons.bookmark : Icons.bookmark_border,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    onPressed: () {
+                      _presenter.toggleSave(job);
+                      setButtonState(() {});
+                    },
+                  );
+                }
+              ),
+            )
+          ]
         );
       },
     );
