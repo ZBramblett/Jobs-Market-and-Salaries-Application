@@ -30,7 +30,7 @@ class _InterviewCalendarWidgetState extends State<InterviewCalendarWidget> {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.primary,
+        color: colorScheme.onSurface,
         borderRadius: BorderRadius.circular(4),
       ),
       child: TableCalendar(
