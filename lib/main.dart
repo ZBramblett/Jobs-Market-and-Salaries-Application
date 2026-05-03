@@ -94,7 +94,7 @@ class _MainScreenState extends State<MainScreen> {
       },
     ),
     const CityComparerScreen(),
-    const SettingsPage(),
+    SettingsPage(),
   ];
 
   @override

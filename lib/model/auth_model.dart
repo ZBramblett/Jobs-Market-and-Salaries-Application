@@ -5,7 +5,7 @@ class AuthModel {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<String?> login(String email, String password) async {
-    try{
+    try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       return null;
     } on FirebaseAuthException catch (e) {
@@ -19,14 +19,17 @@ class AuthModel {
         default:
           return 'An unknown error occurred';
       }
-      } catch (e) {
-        return 'An unknown error occurred';
+    } catch (e) {
+      return 'An unknown error occurred';
     }
   }
 
   Future<String?> signUp(String email, String password) async {
-    try{
-      await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    try {
+      await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
       return null;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -40,7 +43,7 @@ class AuthModel {
           return 'An unknown error occurred';
       }
     } catch (e) {
-        return 'An unknown error occurred';
+      return 'An unknown error occurred';
     }
   }
 
@@ -49,7 +52,8 @@ class AuthModel {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return 'Sign in cancelled';
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -100,5 +104,4 @@ class AuthModel {
   Stream<User?> authStateChanges() => _auth.authStateChanges();
 
   User? get currentUser => _auth.currentUser;
-
 }
