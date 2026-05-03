@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:finalexam_salaries/model/ai_career_search_model.dart';
 import 'package:finalexam_salaries/model/save_jobs.dart';
+import 'package:finalexam_salaries/model/salary_model.dart';
 
 class SavedJobsList extends StatefulWidget {
   const SavedJobsList({super.key});
@@ -54,27 +55,37 @@ class _SavedJobsListState extends State<SavedJobsList> {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: colorScheme.primary.withValues(alpha: 0.2),
-              ),
-            ),
-            child: Text(
-              "Software engineering jobs coming soon.",
-              style: TextStyle(
-                color: colorScheme.onSurface.withValues(alpha: 0.5),
-                fontSize: 14,
-              ),
-            ),
-          ),
+        if (SaveJobs.instance.savedJobsSE.isEmpty)
+  Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    child: Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.2)),
+      ),
+      child: Text(
+        "No saved software engineering jobs yet.",
+        style: TextStyle(
+          color: colorScheme.onSurface.withValues(alpha: 0.5),
+          fontSize: 14,
         ),
+      ),
+    ),
+  )
+else
+  ListView.builder(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    itemCount: SaveJobs.instance.savedJobsSE.length,
+    itemBuilder: (context, index) {
+      final job = SaveJobs.instance.savedJobsSE[index];
+      return _SEJobCard(job: job);
+    },
+  ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
           child: Text(
@@ -339,6 +350,84 @@ class _DetailRow extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SEJobCard extends StatelessWidget {
+  final SalaryEntry job;
+  const _SEJobCard({required this.job});
+
+  String _formatSalary() {
+    if (job.salaryMin != null && job.salaryMax != null) {
+      return '\$${job.salaryMin} - \$${job.salaryMax}';
+    }
+    return 'Salary N/A';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 4,
+            offset: const Offset(2,2),
+          ),
+        ],
+        border: Theme.of(context).brightness == Brightness.dark
+            ? Border.all(color: colorScheme.primary.withValues(alpha: 0.3), width: 0.75)
+            : null,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  job.jobTitle,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  job.company,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  job.location,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            _formatSalary(),
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.primary,
+            ),
+          ),
+        ],
+      )
     );
   }
 }
