@@ -152,6 +152,16 @@ class SaveJobs extends ChangeNotifier{
 
   void updateTracking(SalaryEntry job, SEJobTracking tracking) {
     _seJobTracking[getSEJobId(job)] = tracking;
+
+    if(tracking.hasInterview && tracking.interviewDate != null) {
+      addInterviewDate(tracking.interviewDate!);
+    } else {
+      final old = _seJobTracking[getSEJobId(job)];
+      if(old?.interviewDate != null) {
+        removeInterviewDate(old!.interviewDate!);
+      }
+    }
+
     _persistSETracking();
     notifyListeners();
   }
@@ -170,6 +180,15 @@ class SaveJobs extends ChangeNotifier{
         interviewDate:    parts[2].isNotEmpty ? DateTime.tryParse(parts[2]) : null,
         confidenceRating: int.tryParse(parts[3]) ?? 0,
       );
+    }
+
+    _interviewDates.clear();
+    for(final tracking in _seJobTracking.values) {
+      if (tracking.hasInterview && tracking.interviewDate != null) {
+        if (!_interviewDates.any((d) => isSameDay(d, tracking.interviewDate!))) {
+          _interviewDates.add(tracking.interviewDate!);
+        }
+      }
     }
   }
 
