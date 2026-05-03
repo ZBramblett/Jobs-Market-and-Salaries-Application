@@ -146,6 +146,10 @@ class SaveJobs extends ChangeNotifier{
     await prefs.setString('se_tracking', jsonEncode(encoded));
   }
 
+  int get appliedCount => _seJobTracking.values.where((t) => t.applied).length;
+
+  int get interviewCount => _seJobTracking.values.where((t) => t.hasInterview).length;
+
   void updateTracking(SalaryEntry job, SEJobTracking tracking) {
     _seJobTracking[getSEJobId(job)] = tracking;
     _persistSETracking();
