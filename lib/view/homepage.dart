@@ -32,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 MaterialPageRoute(builder: (_) => const GraphicsPageScreen()));
             }, 
             tooltip: 'Analytics',
-            icon: const Icon(Icons.analytics))
+            icon: const Icon(Icons.analytics), iconSize: 35)
         ],
       ),
       body: SingleChildScrollView(
@@ -81,8 +81,8 @@ class OverviewCard extends StatelessWidget {
 
     //temporary, will be replaced when software engineering search is implemented
     final int saved = savedJobsAI.length + savedJobsSE.length;
-    final int applied = 0;
-    final int interviews = 0;
+    final int applied = SaveJobs.instance.appliedCount;
+    final int interviews = SaveJobs.instance.interviewCount;
     final int offers = 0;
 
     return Container(
