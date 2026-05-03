@@ -77,9 +77,10 @@ class OverviewCard extends StatelessWidget {
   Widget _buildCard(BuildContext context, int saved) {
     final colorScheme = Theme.of(context).colorScheme;
     final savedJobsAI = SaveJobs.instance.savedJobsAI;
+    final savedJobsSE = SaveJobs.instance.savedJobsSE;
 
     //temporary, will be replaced when software engineering search is implemented
-    final int saved = savedJobsAI.length;
+    final int saved = savedJobsAI.length + savedJobsSE.length;
     final int applied = 0;
     final int interviews = 0;
     final int offers = 0;
