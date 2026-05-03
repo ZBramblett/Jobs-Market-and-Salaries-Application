@@ -17,6 +17,7 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
   String currentStyle = 'distribution';
   String currentMetric = 'salary';
 
+  
   //TEMPORARY these values are here for testing purposes
   final List<PieChartSectionData> placeHolderData = [
     PieChartSectionData(value: 40, color: Colors.blue, title: 'A', radius: 120),
@@ -131,6 +132,19 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
       default:            return metric;
     }
   }
+
+  List<Color> _getColorsForPie() {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return [
+      colorScheme.primary,
+      colorScheme.secondary,
+      colorScheme.tertiary,
+      colorScheme.onPrimary,
+      colorScheme.onSecondary,
+      ];
+  }
+
 
   @override
   void initState() {
