@@ -32,7 +32,7 @@ class LineChartWidget extends StatelessWidget{
                 child: Text(
                   yAxisLabel,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -44,7 +44,7 @@ class LineChartWidget extends StatelessWidget{
                 child: Text(
                   xAxisLabel,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
