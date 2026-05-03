@@ -13,20 +13,18 @@ class GraphicsPresenter {
     AIJobs ?? await model.getAIJobData();
   }
 
-  //Method to build line chart
-  
+  //Group jobs by year
+  Map<int, List<AIJob>> groupByYear(List<AIJob> jobs) {
+    final Map<int, List<AIJob>> groupedJobs = {};
 
-  //Helper Methods for building line chart
+    for (final job in jobs) {
+      groupedJobs.putIfAbsent(job.year, () => []).add(job);
+    }
+    //since jobs aren't sorted by year in the database, this sorts them
+    return Map.fromEntries(
+      groupedJobs.entries.toList()..sort((a,b) => a.key.compareTo(b.key)),
+    );
+  }
 
-
-  //Method to build pie chart
-
-  //Method to build bar chart
-
-  //trends over time
-
-  //attribute comparison
-
-  //job distribution methods, these will deal with creating the pie chart graphs in the view
 
 }
