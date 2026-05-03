@@ -16,13 +16,19 @@ class _AICareerPageState extends State<AICareerPage> {
   final TextEditingController _searchController = TextEditingController();
 
   List<AIJob> _results = [];
+  List<MapEntry<String, int>> _topSkills = [];
+
+
   bool _hasSearched = false;
   bool _loading = false;
+  bool _loadingSkills = false;
+
 
   @override
   void initState() {
     super.initState();
     themePresenter.addListener(_onThemeChanged);
+    _loadSkillInvestment();
   }
 
   @override
@@ -33,6 +39,21 @@ class _AICareerPageState extends State<AICareerPage> {
   }
 
   void _onThemeChanged() => setState(() {});
+
+  Future<void> _loadSkillInvestment() async {
+    setState(() => _loadingSkills = true);
+
+    final skillDemand = await _presenter.getSkillDemand();
+    final sortedSkills = skillDemand.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    if (!mounted) return;
+
+    setState(() {
+      _topSkills = sortedSkills.take(5).toList();
+      _loadingSkills = false;
+    });
+  }
 
   Future<void> _runSearch() async {
     final query = _searchController.text.trim();
@@ -101,6 +122,8 @@ class _AICareerPageState extends State<AICareerPage> {
               ),
             ),
 
+            _buildSkillInvestmentSection(scheme),
+
             // Results 
             Expanded(
               child: _buildResults(scheme),
@@ -110,6 +133,34 @@ class _AICareerPageState extends State<AICareerPage> {
       ),
     );
   }
+
+  Widget _buildSkillInvestmentSection(ColorScheme scheme) {
+    if (_loadingSkills) {
+      return const Padding(
+        padding: EdgeInsets.all(16),
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (_topSkills.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final topSkill = _topSkills.first;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: CustomCard(
+        title: 'Skill Investment',
+        description:
+        'Most in-demand skill: ${topSkill.key}\n'
+        'Total job openings: ${topSkill.value}\n\n'
+        'Top skills:\n'
+        '${_topSkills.map((skill) => '${skill.key}: ${skill.value} openings').join('\n')}',
+      ),
+    );
+  }
+
 
   Widget _buildResults(ColorScheme scheme) {
     if (_loading) {
