@@ -87,4 +87,9 @@ class GraphicsPresenter {
       );
     }).toList();
   }
+
+  //Returns a list of the sorted years, useful for line chart
+  List<int> getSortedYears(List<AIJob> jobs) {
+    return groupByYear(jobs).keys.toList();
+  }
 }
