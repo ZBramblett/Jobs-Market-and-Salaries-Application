@@ -1,4 +1,5 @@
 import 'package:finalexam_salaries/model/ai_career_search_model.dart';
+import 'package:finalexam_salaries/model/salary_model.dart';
 import 'package:finalexam_salaries/presenter/graphics_presenter.dart';
 import 'package:finalexam_salaries/view/UI_functions.dart';
 import 'package:finalexam_salaries/widgets/line_chart_widget.dart';
@@ -63,6 +64,7 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
       case 'aiRiskScore': return 'Avg. Ai Risk Score';
       case 'skillDemand': return 'Avg. Skill Demand';
       case 'jobOpenings': return 'Avg. Job Openings';
+      case 'salaryRange': return 'Salary Range';
       default:            return currentMetric;
     }
   }
@@ -74,8 +76,8 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
       colorScheme.primary,
       colorScheme.secondary,
       colorScheme.tertiary,
-      colorScheme.onPrimary,
-      colorScheme.onSecondary,
+      Colors.greenAccent,
+      Colors.teal,
       ];
   }
 
@@ -89,6 +91,7 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
   Future<void> _loadData() async{
     try {
       await _presenter.fetchAIJobData();
+      await _presenter.fetchSEJobData();
       _rebuildChartData();
     } catch(e) {
       setState(() {
@@ -97,24 +100,46 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
     }
   }
 
+  String Function(SalaryEntry) _seSelectorForMetric(String metric) {
+    switch(metric) {
+      case 'salaryRange': return (j) => _presenter.getSalaryBucket(j);
+      default: return (j) => _presenter.getSalaryBucket(j);
+    }
+  }
+
   void _rebuildChartData() {
-    final jobs = _presenter.AIJobs;
-    if(jobs == null || jobs.isEmpty) {
+    if (currentDataSet == 'se') {
+      final jobs = _presenter.seJobs;
+      if (jobs == null || jobs.isEmpty) {
+        setState(() => _isLoading = false);
+        return;
+      }
+      final pieSections = _presenter.buildPieSectionsSE(
+        jobs,
+        _seSelectorForMetric(currentMetric),
+        colors: _getColorsForPie(),
+      );
       setState(() {
+        _pieSections = pieSections;
+        _lineSpots = [];
+        _lineYearLabels = [];
         _isLoading = false;
       });
       return;
     }
-
+  final jobs = _presenter.AIJobs;
+  if (jobs == null || jobs.isEmpty) {
+      setState(() => _isLoading = false);
+      return;
+    }
     final pieSections = _presenter.buildPieSections(
-      jobs, 
-      _groupSelectorForMetric(currentMetric), 
-      _valueSelectorForMetric(currentMetric, jobs), 
-      colors: _getColorsForPie()
-      );
-    
+      jobs,
+      _groupSelectorForMetric(currentMetric),
+      _valueSelectorForMetric(currentMetric, jobs),
+      colors: _getColorsForPie(),
+    );
     final lineSpots = _presenter.buildTrendSpots(
-      jobs, 
+      jobs,
       _trendValueSelectorForMetric(currentMetric),
     );
 
@@ -403,7 +428,7 @@ class _FilterSheetState extends State<_FilterSheet> {
 
                   if(v == 'se') {
                     tempStyle = 'distribution';
-                    tempMetric = 'location';
+                    tempMetric = 'salaryRange';
                   } else {
                     tempStyle = 'distribution';
                     tempMetric = 'experience';
@@ -428,7 +453,6 @@ class _FilterSheetState extends State<_FilterSheet> {
                   label: "Metric", 
                   options: tempDataSet == 'se'
                     ? const {
-                      'location': 'Location',
                       'salaryRange': 'Salary Range',
                     }
                     : const {
