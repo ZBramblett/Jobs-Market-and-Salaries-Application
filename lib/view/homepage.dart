@@ -1,6 +1,7 @@
 import 'package:finalexam_salaries/view/graphics_page.dart';
 import 'package:finalexam_salaries/widgets/interview_calendar.dart';
 import 'package:finalexam_salaries/widgets/saved_jobs_widget.dart';
+import 'package:finalexam_salaries/presenter/theme_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:finalexam_salaries/model/save_jobs.dart';
 // import 'package:finalexam_salaries/view/UI_functions.dart';
@@ -16,8 +17,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,11 +27,14 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             onPressed: () {
               Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (_) => const GraphicsPageScreen()));
-            }, 
+                context,
+                MaterialPageRoute(builder: (_) => const GraphicsPageScreen()),
+              );
+            },
             tooltip: 'Analytics',
-            icon: const Icon(Icons.analytics), iconSize: 35)
+            icon: const Icon(Icons.analytics),
+            iconSize: 35,
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -65,12 +67,12 @@ class OverviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: SaveJobs.instance, 
+      animation: SaveJobs.instance,
       builder: (context, _) {
         final saved = SaveJobs.instance.savedJobsAI.length;
 
         return _buildCard(context, saved);
-      }
+      },
     );
   }
 
@@ -90,7 +92,9 @@ class OverviewCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(
+          themePresenter.BORDER_RADIUS.toDouble(),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.15),
@@ -99,7 +103,10 @@ class OverviewCard extends StatelessWidget {
           ),
         ],
         border: Theme.of(context).brightness == Brightness.dark
-            ? Border.all(color: colorScheme.primary.withValues(alpha: 0.3), width: 0.75)
+            ? Border.all(
+                color: colorScheme.primary.withValues(alpha: 0.3),
+                width: 0.75,
+              )
             : null,
       ),
       child: Column(
@@ -118,12 +125,20 @@ class OverviewCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               StatCell(label: "Saved", value: saved, colorScheme: colorScheme),
-              StatCell(label: "Applied", value: applied, colorScheme: colorScheme),
-              StatCell(label: "Interviews", value: interviews, colorScheme: colorScheme),
+              StatCell(
+                label: "Applied",
+                value: applied,
+                colorScheme: colorScheme,
+              ),
+              StatCell(
+                label: "Interviews",
+                value: interviews,
+                colorScheme: colorScheme,
+              ),
             ],
-          )
+          ),
         ],
-      )
+      ),
     );
   }
 }
@@ -163,4 +178,3 @@ class StatCell extends StatelessWidget {
     );
   }
 }
-
