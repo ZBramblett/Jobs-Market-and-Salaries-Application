@@ -10,7 +10,10 @@ class AICareerPresenter {
     return _data.searchByJobTitle(query);
   }
 
-<<<<<<< HEAD
+  bool isSaved(AIJob job) => _saved.isSaved(job);
+
+  void toggleSave(AIJob job) => _saved.toggle(job);
+
   Future<Map<String, int>> getSkillDemand() async {
     final jobs = await _data.loadJobs();
 
@@ -22,18 +25,13 @@ class AICareerPresenter {
 
       if (skill.isEmpty) continue;
 
-      if(skillCounts.containsKey(skill)) {
+      if (skillCounts.containsKey(skill)) {
         skillCounts[skill] = skillCounts[skill]! + openings;
       } else {
         skillCounts[skill] = openings;
-      
       }
     }
 
     return skillCounts;
   }
-=======
-  bool isSaved(AIJob job) => _saved.isSaved(job);
-  void toggleSave(AIJob job) => _saved.toggle(job);
->>>>>>> main
 }

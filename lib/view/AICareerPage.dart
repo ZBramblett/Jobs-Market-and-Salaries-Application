@@ -18,11 +18,9 @@ class _AICareerPageState extends State<AICareerPage> {
   List<AIJob> _results = [];
   List<MapEntry<String, int>> _topSkills = [];
 
-
   bool _hasSearched = false;
   bool _loading = false;
   bool _loadingSkills = false;
-
 
   @override
   void initState() {
@@ -57,6 +55,7 @@ class _AICareerPageState extends State<AICareerPage> {
 
   Future<void> _runSearch() async {
     final query = _searchController.text.trim();
+
     if (query.isEmpty) {
       setState(() {
         _results = [];
@@ -64,9 +63,13 @@ class _AICareerPageState extends State<AICareerPage> {
       });
       return;
     }
+
     setState(() => _loading = true);
+
     final results = await _presenter.search(query);
+
     if (!mounted) return;
+
     setState(() {
       _results = results;
       _hasSearched = true;
@@ -95,7 +98,7 @@ class _AICareerPageState extends State<AICareerPage> {
         color: scheme.surface,
         child: Column(
           children: [
-            // Search bar 
+            // Search bar
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Row(
@@ -124,7 +127,7 @@ class _AICareerPageState extends State<AICareerPage> {
 
             _buildSkillInvestmentSection(scheme),
 
-            // Results 
+            // Results
             Expanded(
               child: _buildResults(scheme),
             ),
@@ -151,21 +154,23 @@ class _AICareerPageState extends State<AICareerPage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: CustomCard(
-        title: 'Skill Investment',
+        title: 'Skill Investment Comparison',
         description:
-        'Most in-demand skill: ${topSkill.key}\n'
-        'Total job openings: ${topSkill.value}\n\n'
-        'Top skills:\n'
-        '${_topSkills.map((skill) => '${skill.key}: ${skill.value} openings').join('\n')}',
+            'This compares total job openings by primary skill to help decide '
+            'which skill may be worth investing in.\n\n'
+            'Recommended skill: ${topSkill.key}\n'
+            'Total openings: ${topSkill.value}\n\n'
+            'Skill ranking:\n'
+            '${_topSkills.asMap().entries.map((entry) => '#${entry.key + 1} ${entry.value.key}: ${entry.value.value} openings').join('\n')}',
       ),
     );
   }
-
 
   Widget _buildResults(ColorScheme scheme) {
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
+
     if (!_hasSearched) {
       return Center(
         child: Padding(
@@ -179,6 +184,7 @@ class _AICareerPageState extends State<AICareerPage> {
         ),
       );
     }
+
     if (_results.isEmpty) {
       return Center(
         child: Text(
@@ -187,6 +193,7 @@ class _AICareerPageState extends State<AICareerPage> {
         ),
       );
     }
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: _results.length,
@@ -197,6 +204,7 @@ class _AICareerPageState extends State<AICareerPage> {
             'Education: ${job.educationLevel}\n'
             'Salary: ${_formatSalary(job.salary)}\n'
             'Country: ${job.country}';
+
         return Stack(
           children: [
             CustomCard(
@@ -209,6 +217,7 @@ class _AICareerPageState extends State<AICareerPage> {
               child: StatefulBuilder(
                 builder: (context, setButtonState) {
                   final saved = _presenter.isSaved(job);
+
                   return IconButton(
                     icon: Icon(
                       saved ? Icons.bookmark : Icons.bookmark_border,
@@ -219,10 +228,10 @@ class _AICareerPageState extends State<AICareerPage> {
                       setButtonState(() {});
                     },
                   );
-                }
+                },
               ),
-            )
-          ]
+            ),
+          ],
         );
       },
     );
