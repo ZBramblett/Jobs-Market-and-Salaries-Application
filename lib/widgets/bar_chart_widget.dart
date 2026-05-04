@@ -23,7 +23,8 @@ class BarChartWidget extends StatelessWidget{
         children: [
           Text(title),
           SizedBox(height: 10),
-          BarChart(
+          Expanded(
+            child:           BarChart(
             BarChartData(
               barGroups: data,
               titlesData: FlTitlesData(
@@ -53,7 +54,9 @@ class BarChartWidget extends StatelessWidget{
               borderData: FlBorderData(show: true),
               gridData: FlGridData(show: true),
             )
-          )
+          ),
+          ),
+
         ],
       ),
     );
