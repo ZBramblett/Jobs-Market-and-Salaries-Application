@@ -83,7 +83,6 @@ class OverviewCard extends StatelessWidget {
     final int saved = savedJobsAI.length + savedJobsSE.length;
     final int applied = SaveJobs.instance.appliedCount;
     final int interviews = SaveJobs.instance.interviewCount;
-    final int offers = 0;
 
     return Container(
       width: double.infinity,
@@ -121,7 +120,6 @@ class OverviewCard extends StatelessWidget {
               StatCell(label: "Saved", value: saved, colorScheme: colorScheme),
               StatCell(label: "Applied", value: applied, colorScheme: colorScheme),
               StatCell(label: "Interviews", value: interviews, colorScheme: colorScheme),
-              StatCell(label: "Offers", value: offers, colorScheme: colorScheme)
             ],
           )
         ],

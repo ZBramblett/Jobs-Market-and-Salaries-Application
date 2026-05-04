@@ -3,6 +3,7 @@ import '../model/graphics_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:finalexam_salaries/model/salary_model.dart';
+import 'package:finalexam_salaries/model/save_jobs.dart';
 
 class GraphicsPresenter {
   GraphicsModel model = GraphicsModel();
@@ -170,5 +171,35 @@ class GraphicsPresenter {
         ));
       }
       return sections;
+    }
+
+    List<BarChartGroupData> getApplicationOverviewBars(Color color) {
+      final s = SaveJobs.instance;
+      final values = [
+        (s.savedJobsAI.length + s.savedJobsSE.length).toDouble(),
+        s.appliedCount.toDouble(),
+        s.interviewCount.toDouble(), 
+      ];
+
+      return List.generate(values.length, (i) => BarChartGroupData(
+        x: i,
+        barRods: [BarChartRodData(toY: values[i], color: color, width: 32, borderRadius: BorderRadius.circular(4))],
+        ));
+    }
+
+    List<BarChartGroupData> getConfidenceDistributionBars(Color color) {
+      final tracking = SaveJobs.instance.savedJobsSE
+        .map((j) => SaveJobs.instance.getTrack(j))
+        .where((t) => t.confidenceRating > 0)
+        .toList();
+      return List.generate(5, (i) => BarChartGroupData(
+        x: i,
+        barRods: [BarChartRodData(
+          toY: tracking.where((t) => t.confidenceRating == i + 1).length.toDouble(),
+          color: color,
+          width: 32,
+          borderRadius: BorderRadius.circular(4),
+        )],
+      ));
     }
 }

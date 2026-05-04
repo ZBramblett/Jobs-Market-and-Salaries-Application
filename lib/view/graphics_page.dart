@@ -2,6 +2,7 @@ import 'package:finalexam_salaries/model/ai_career_search_model.dart';
 import 'package:finalexam_salaries/model/salary_model.dart';
 import 'package:finalexam_salaries/presenter/graphics_presenter.dart';
 import 'package:finalexam_salaries/view/UI_functions.dart';
+import 'package:finalexam_salaries/widgets/bar_chart_widget.dart';
 import 'package:finalexam_salaries/widgets/line_chart_widget.dart';
 import 'package:finalexam_salaries/widgets/pie_chart_widget.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -28,6 +29,8 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
   List<PieChartSectionData> _pieSections = [];
   List<FlSpot> _lineSpots = [];
   List<int> _lineYearLabels = [];
+  List<BarChartGroupData> _barData = [];
+  List<String> _barLabels = [];
 
   void _openFilterModal() {
 
@@ -127,30 +130,45 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
       });
       return;
     }
-  final jobs = _presenter.AIJobs;
-  if (jobs == null || jobs.isEmpty) {
-      setState(() => _isLoading = false);
+
+    if(currentDataSet == 'tracking') {
+      final color = Theme.of(context).colorScheme.primary;
+      setState(() {
+        _barData = currentMetric == 'overview'
+            ? _presenter.getApplicationOverviewBars(color)
+            : _presenter.getConfidenceDistributionBars(color);
+        _barLabels = currentMetric == 'overview'
+          ? ['Saved', 'Applied', 'Interviews']
+          : ['1', '2', '3', '4', '5'];
+        _isLoading = false;
+      });
       return;
     }
-    final pieSections = _presenter.buildPieSections(
-      jobs,
-      _groupSelectorForMetric(currentMetric),
-      _valueSelectorForMetric(currentMetric, jobs),
-      colors: _getColorsForPie(),
-    );
-    final lineSpots = _presenter.buildTrendSpots(
-      jobs,
-      _trendValueSelectorForMetric(currentMetric),
-    );
 
-    final yearLabels = _presenter.getSortedYears(jobs);
+    final jobs = _presenter.AIJobs;
+    if (jobs == null || jobs.isEmpty) {
+        setState(() => _isLoading = false);
+        return;
+      }
+      final pieSections = _presenter.buildPieSections(
+        jobs,
+        _groupSelectorForMetric(currentMetric),
+        _valueSelectorForMetric(currentMetric, jobs),
+        colors: _getColorsForPie(),
+      );
+      final lineSpots = _presenter.buildTrendSpots(
+        jobs,
+        _trendValueSelectorForMetric(currentMetric),
+      );
 
-    setState(() {
-      _pieSections = pieSections;
-      _lineSpots = lineSpots;
-      _lineYearLabels = yearLabels;
-      _isLoading = false;
-    });
+      final yearLabels = _presenter.getSortedYears(jobs);
+
+      setState(() {
+        _pieSections = pieSections;
+        _lineSpots = lineSpots;
+        _lineYearLabels = yearLabels;
+        _isLoading = false;
+      });
   }
 
   //Metric to group pie chart
@@ -256,8 +274,8 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
             child: Wrap(
               spacing: 8,
               children: [
-                _SummaryChip(label: currentDataSet == 'ai' ? 'AI' : 'Software Engineering'),
-                _SummaryChip(label: currentStyle == 'distribution' ? 'Distribution' : 'Trends'),
+                _SummaryChip(label: currentDataSet == 'ai' ? 'AI' : currentDataSet == 'se' ? 'Software Engineering': 'My Applications'),
+                _SummaryChip(label: currentStyle == 'distribution' ? 'Distribution' : currentStyle == 'trends' ? 'Trends': 'Bar Char'),
                 _SummaryChip(label: _yAxisLabel()),
               ],
             ),
@@ -269,7 +287,19 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
             duration: const Duration(milliseconds: 300),
             transitionBuilder: (child, animation) =>
               FadeTransition(opacity: animation, child: child),
-            child: currentStyle == 'distribution'
+            child: currentDataSet == 'tracking'
+                ? SizedBox(
+                  height: 350,
+                  child: BarChartWidget(
+                    data: _barData, 
+                    labels: _barLabels, 
+                    title: currentMetric == 'overview'
+                      ? 'Applications Overview'
+                      : 'Confidence Distribution', 
+                    yAxisLabel: 'Count'
+                  ),
+                )     
+              :  currentStyle == 'distribution'
                 ? PieChartWidget(
                   title: "Job Distribution by $currentMetric", 
                   sections: _pieSections,
@@ -288,6 +318,21 @@ class _GraphicsPageScreenState extends State<GraphicsPageScreen> {
           ),
           ),
           const SizedBox(height: 32),
+          Text(
+            "Data taken from Kaggle Software Engineer Jobs & Salaries 2024 Dataset(courtesy of Emre Öksüz) and AI Job Impact & Salary Dataset (2015 - 2035) (courtesy of Shreyash Gade)",
+            style: TextStyle(
+              fontSize: 8,
+              color: colorScheme.onSurface.withValues(alpha:0.4),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            "Links: \nhttps://www.kaggle.com/datasets/emreksz/software-engineer-jobs-and-salaries-2024 \n https://www.kaggle.com/datasets/shree0910/ai-job-risk-and-salary-dataset-20152035?select=Future%20of%20Jobs%20AI%20Dataset.csv",
+            style: TextStyle(
+              fontSize: 8,
+              color: colorScheme.onSurface.withValues(alpha: 0.4),
+            ),
+          )
         ],
       ),
     );
@@ -440,7 +485,9 @@ class _FilterSheetState extends State<_FilterSheet> {
                 label: "Dataset", 
                 options: const {
                   'ai' : 'AI Careers', 
-                  'se': 'Software Engineering Careers'}, 
+                  'se': 'Software Engineering Careers',
+                  'tracking': 'My Applications',
+                  }, 
                 selected: tempDataSet, 
                 onChanged: (v) => setState(() {
                   tempDataSet = v;
@@ -448,6 +495,9 @@ class _FilterSheetState extends State<_FilterSheet> {
                   if(v == 'se') {
                     tempStyle = 'distribution';
                     tempMetric = 'salaryRange';
+                  }else if (v == 'tracking') {
+                    tempStyle = 'bar';
+                    tempMetric = 'overview';
                   } else {
                     tempStyle = 'distribution';
                     tempMetric = 'experience';
@@ -459,18 +509,30 @@ class _FilterSheetState extends State<_FilterSheet> {
                 label: "Analytic", 
                 options: const {
                   'distribution' : 'Job Distribution', 
-                  'trends': 'Trends Over Time'}, 
+                  'trends': 'Trends Over Time',
+                  'bar': 'Bar Chart',
+                  }, 
                 selected: tempStyle, 
                 onChanged: (v) => setState(() {
                   tempStyle = v;
                   tempMetric = v == 'distribution' ? 'experience' : 'salary';
                 }),
-                disabledOptions: tempDataSet == 'se' ? const{'trends'} : const {},
+                disabledOptions: tempDataSet == 'se' 
+                    ? const{'trends', 'bar'}
+                    : tempDataSet == 'tracking'
+                      ? const {'distribution', 'trends'}
+                      : const {'bar'}
               ),
               const SizedBox(height: 20),
                 _SheetSection(
                   label: "Metric", 
-                  options: tempDataSet == 'se'
+                  options: tempDataSet == 'tracking'
+                      ? const {
+                        'overview': 'Application Overview',
+                        'confidence': 'Confidence Distribtution',
+                      }
+                  
+                 : tempDataSet == 'se'
                     ? const {
                       'salaryRange': 'Salary Range',
                     }
@@ -487,7 +549,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                     } ,
                   selected: tempMetric, 
                   onChanged: (v) => setState(() => tempMetric = v),
-                  disabledOptions: tempDataSet == 'se' ? const {} : disabledMetrics,
+                  disabledOptions: tempDataSet == 'se' || tempDataSet == 'tracking' ? const {} : disabledMetrics,
                 ),
                 const SizedBox(height: 32),
 
