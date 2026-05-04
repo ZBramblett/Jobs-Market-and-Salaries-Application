@@ -3,8 +3,8 @@ import 'package:finalexam_salaries/widgets/interview_calendar.dart';
 import 'package:finalexam_salaries/widgets/saved_jobs_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:finalexam_salaries/model/save_jobs.dart';
-import 'package:finalexam_salaries/view/UI_functions.dart';
-import '../presenter/auth_presenter.dart';
+// import 'package:finalexam_salaries/view/UI_functions.dart';
+// import '../presenter/auth_presenter.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -83,7 +83,6 @@ class OverviewCard extends StatelessWidget {
     final int saved = savedJobsAI.length + savedJobsSE.length;
     final int applied = SaveJobs.instance.appliedCount;
     final int interviews = SaveJobs.instance.interviewCount;
-    final int offers = 0;
 
     return Container(
       width: double.infinity,
@@ -121,7 +120,6 @@ class OverviewCard extends StatelessWidget {
               StatCell(label: "Saved", value: saved, colorScheme: colorScheme),
               StatCell(label: "Applied", value: applied, colorScheme: colorScheme),
               StatCell(label: "Interviews", value: interviews, colorScheme: colorScheme),
-              StatCell(label: "Offers", value: offers, colorScheme: colorScheme)
             ],
           )
         ],
