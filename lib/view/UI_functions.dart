@@ -124,6 +124,7 @@ class CustomCard extends StatefulWidget {
   final String description;
   final VoidCallback? onPressed;
   final String buttonText;
+  final VoidCallback? onEdit;
 
   const CustomCard({
     super.key,
@@ -131,6 +132,7 @@ class CustomCard extends StatefulWidget {
     required this.description,
     this.onPressed,
     this.buttonText = 'Action',
+    this.onEdit,
   });
 
   @override
@@ -187,13 +189,27 @@ class _CustomCardState extends State<CustomCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Text(
-                    widget.title,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: scheme.onSurface,
-                    ),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          widget.title,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: scheme.onSurface,
+                          ),
+                        ),
+                      ),
+                      if (widget.onEdit != null)
+                        IconButton(
+                          icon: Icon(Icons.edit_outlined,
+                              size: 18, color: scheme.onSurface.withAlpha(180)),
+                          visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.only(left: 4),
+                          onPressed: widget.onEdit,
+                        ),
+                    ],
                   ),
                 ),
                 if (widget.onPressed != null) ...[

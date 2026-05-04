@@ -178,7 +178,7 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     NavigationDestination(
                       icon: Icon(Icons.compare_arrows),
-                      label: 'Compare',
+                      label: 'City Compare',
                       selectedIcon: Icon(
                         Icons.compare_arrows,
                         color: Theme.of(context).colorScheme.onPrimary,
