@@ -510,6 +510,9 @@ class _SETrackingSheetState extends State<_SETrackingSheet> {
       lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
     );
     if(picked != null) {
+      if(_tracking.interviewDate != null) {
+        SaveJobs.instance.removeInterviewDate(_tracking.interviewDate!);
+      }
       setState(() => _tracking.interviewDate = picked);
       SaveJobs.instance.addInterviewDate(picked);
     }
