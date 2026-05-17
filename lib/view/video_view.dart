@@ -47,6 +47,13 @@ class _VideoViewState extends State<VideoView> {
 
     if (query.isEmpty) return;
 
+    if (apiKey.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('YouTube API key not configured. Run with --dart-define=YOUTUBE_API_KEY=your_key')),
+      );
+      return;
+    }
+
     setState(() => isLoading = true);
 
     searchController.text = query;
@@ -76,6 +83,12 @@ class _VideoViewState extends State<VideoView> {
             })
             .toList();
       });
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('YouTube search failed (${response.statusCode}): ${response.body}')),
+        );
+      }
     }
 
     setState(() => isLoading = false);
